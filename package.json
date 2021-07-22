@@ -1,0 +1,61 @@
+{
+  "name": "vscode-hanspell",
+  "displayName": "vscode-hanspell",
+  "description": "(주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스를 이용한 한글 맞춤법 검사기.",
+  "version": "0.0.1",
+  "publisher": "9beach",
+  "engines": {
+    "vscode": "^1.58.0"
+  },
+  "categories": [
+    "Linters"
+  ],
+  "activationEvents": [
+    "onCommand:vscode-hanspell.spellCheckByDAUM",
+    "onCommand:vscode-hanspell.spellCheckByPNU"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-hanspell.spellCheckByDAUM",
+        "title": "맞춤법 검사 (다음)"
+      },
+      {
+        "command": "vscode-hanspell.spellCheckByPNU",
+        "title": "맞춤법 검사 (부산대)"
+      }
+    ]
+  },
+  "main": "./out/extension.js",
+  "keywords": [
+    "Hangul",
+    "Korean",
+    "SpellCheck",
+    "한글",
+    "맞춤법"
+  ],
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^14.17.5",
+    "@types/vscode": "^1.58.0",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
+    "glob": "^7.1.7",
+    "mocha": "^8.4.0",
+    "typescript": "^4.3.2",
+    "vscode-test": "^1.5.2"
+  },
+  "dependencies": {
+    "hanspell": "^0.8.5"
+  }
+}
