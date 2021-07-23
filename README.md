@@ -4,6 +4,10 @@
 
 터미널에서 커맨드 라인으로 작업하기를 선호하는 사람에게는 [hanspell](https://github.com/9beach/hanspell) 또는 [hanspell-hs](https://github.com/9beach/hanspell-hs)를 추천합니다.
 
+## 설치
+
+[비주얼 스튜디오 코드 마켓 플레이스](https://marketplace.visualstudio.com/items?itemName=9beach.vscode-hanspell) 또는 비주얼 스튜디오 코드 익스텐션 탭에서 '한스펠'로 검색해서 설치합니다.
+
 ## 주요 기능 및 사용법
 
 F1 키를 눌러 명령 팔레트가 뜨면 아래의 그림과 같이 맞춤법 검사 명령을 선택할 수 있습니다. 만약 맞춤법 명령이 보이지 않는다면 '맞춤법'을 타이핑해서 검색하시기 바랍니다.
