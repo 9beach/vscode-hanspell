@@ -75,7 +75,7 @@ function createDiagnostic(
       typo,
       range,
       typo.info ? typo.info : '맞춤법 교정',
-      vscode.DiagnosticSeverity.Error
+      vscode.DiagnosticSeverity.Warning
     );
   diagnostic.code = HANSPELL_MENTION;
 
