@@ -1,9 +1,11 @@
 # Change Log
 
-All notable changes to the "vscode-hanspell" extension will be documented in this file.
+## [0.1.0] - 2021-07-23
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+### 추가된 기능
 
-## [Unreleased]
-
-- Initial release
+- (주)다음의 웹 서비스를 이용한 한글 맞춤법 검사 기능
+- 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스를 이용한 한글 맞춤법 검사 기능
+- 단어별로 맞춤법을 교정하는 기능
+- 한꺼번에 모든 맞춤법을 교정하는 기능
+- `$HOME/.hanspell-ignore` 파일에 등록하여 맞춤법 검사에서 제외할 단어를 지정하는 기능 
