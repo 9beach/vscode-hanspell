@@ -37,6 +37,9 @@ export function activate(context: vscode.ExtensionContext) {
   );
 }
 
+/**
+ * Function for 'vscode-hanspell.fixTypo' code action.
+ */
 function fixTypo(
   args: {
     document: vscode.TextDocument,
@@ -49,6 +52,9 @@ function fixTypo(
   vscode.workspace.applyEdit(edit);
 }
 
+/**
+ * Function for 'vscode-hanspell.fixAllTypos' code action.
+ */
 function fixAllTypos(
   args: {
     document: vscode.TextDocument
@@ -126,7 +132,6 @@ export class Hanspell implements vscode.CodeActionProvider {
     let actions: vscode.CodeAction[] = [];
 
     diagnostic.typo.suggestions.forEach((suggestion: string) => {
-      // Fixes a typo.
       const action = new vscode.CodeAction(
         `⤷ ${suggestion}`,
         vscode.CodeActionKind.QuickFix

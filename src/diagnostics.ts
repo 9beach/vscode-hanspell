@@ -3,19 +3,31 @@ import {
   docs2typos
 } from './spellcheck';
 
-/** Code that is used to associate diagnostic entries with code actions. */
+/**
+ * Used to associate diagnostic entries with code actions.
+ */
 export const HANSPELL_MENTION = 'hanspell';
 
+/**
+ * Dictionary for `vscode.TextDocument` to diagnostics.
+ */
+const hanspellDiagnostics =
+  vscode.languages.createDiagnosticCollection("hanspell");
+
+/**
+ * Returns the diagnostics for the given document.
+ */
 export function getHanspellDiagnostics(
   doc: vscode.TextDocument
 ): HanspellDiagnostic[] {
   return hanspellDiagnostics.get(doc.uri) as HanspellDiagnostic[];
 }
 
-// vscode.window.showInformationMessage("createDiagnosticCollection called.",);
-const hanspellDiagnostics =
-  vscode.languages.createDiagnosticCollection("hanspell");
-
+/**
+ * Refreshes the diagnostics for the given document from docs2typos.
+ * 
+ * Automatically called when the document is edited.
+ */
 export function refreshDiagnostics(
   doc: vscode.TextDocument
 ): void {
@@ -43,6 +55,9 @@ export function refreshDiagnostics(
   hanspellDiagnostics.set(doc.uri, diagnostics);
 }
 
+/**
+ * Diagnostic data structure for spell checks and code actions.
+ */
 export class HanspellDiagnostic extends vscode.Diagnostic {
   typo: any;
 
@@ -57,12 +72,14 @@ export class HanspellDiagnostic extends vscode.Diagnostic {
   }
 }
 
+/**
+ * Creates a diagnostic for spell check and code action.
+ */
 function createDiagnostic(
   lineIndex: number,
   column: number,
   typo: any
 ): HanspellDiagnostic {
-  // create range that represents, where in the document the word is
   const range = new vscode.Range(
     lineIndex,
     column,
@@ -82,6 +99,9 @@ function createDiagnostic(
   return diagnostic;
 }
 
+/**
+ * Subscribes `refreshDiagnostics` to documents change events.
+ */
 export function subscribeHanspellDiagnosticsToDocumentChanges(
   context: vscode.ExtensionContext,
 ): void {
