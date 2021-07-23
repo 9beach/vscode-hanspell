@@ -1,9 +1,26 @@
 import * as vscode from 'vscode';
+import * as minimatch from 'minimatch';
 import { refreshDiagnostics } from './diagnostics';
+import * as fs from 'fs';
 
 const hanspell = require('hanspell');
 
 export const docs2typos = new WeakMap();
+
+const homedir: string | undefined = process.env.HOME || process.env.USERPROFILE;
+let ignores: string = '';
+
+try {
+	ignores = fs.readFileSync(`${homedir}/.hanspell-ignore`, 'utf8');
+	ignores = ignores.replace(/[,{}]/g, '');
+	ignores = `{${ignores.replace(/[\n ][\n ]*/g, ',')}}`;
+	if (ignores.length < 4) {
+		ignores = '';
+	}
+	console.log('.hanspell-ignore: ' + ignores);
+} catch (err) {
+	console.log(err);
+}
 
 enum SpellCheckServer {
 	pnu = 0,
@@ -14,7 +31,8 @@ export function spellCheckByPNU(): void {
 	vscode.window.withProgress(
 		{
 			location: vscode.ProgressLocation.Notification,
-			title: '맞춤법 검사(부산대)를 진행중입니다.'
+			title: '맞춤법 검사(부산대) 중입니다.',
+			cancellable: true
 		},
 		() => spellCheck(SpellCheckServer.pnu).catch(err => {
 			vscode.window.showInformationMessage(err);
@@ -26,7 +44,8 @@ export function spellCheckByDAUM(): void {
 	vscode.window.withProgress(
 		{
 			location: vscode.ProgressLocation.Notification,
-			title: '맞춤법 검사(다음)를 진행중입니다.'
+			title: '맞춤법 검사(다음) 중입니다.',
+			cancellable: true,
 		},
 		() => spellCheck(SpellCheckServer.daum).catch(err => {
 			vscode.window.showInformationMessage(err);
@@ -35,7 +54,7 @@ export function spellCheckByDAUM(): void {
 }
 
 /**
- * Spell checks the active document, and makes docs2typos map.
+ * Spell checks the active document, and sets docs2typos map.
  */
 function spellCheck(server: SpellCheckServer): Promise<string> {
 	const editor = vscode.window.activeTextEditor;
@@ -50,20 +69,22 @@ function spellCheck(server: SpellCheckServer): Promise<string> {
 		editor.selection.isEmpty ? undefined : editor.selection
 	);
 
-	// vscode.window.showInformationMessage("맞춤법 검사를 시작합니다.",);
-
 	let typos: any[] = [];
 
 	function spellCheckGot(response: any[]): void {
 		typos = typos.concat(response);
-		console.log(response);
 	}
 
 	return new Promise((resolve, reject) => {
 		function spellCheckFinished(): void {
-			docs2typos.set(doc, uniq(typos));
+			docs2typos.set(
+				doc,
+				ignores
+					? uniq(typos).filter(typo => !minimatch(typo.token, ignores))
+					: uniq(typos)
+			);
 			refreshDiagnostics(doc);
-			resolve("맞춤법 검사를 마쳤습니다.",);
+			resolve("맞춤법 검사를 마쳤습니다.");
 		}
 
 		switch (server) {
@@ -73,7 +94,7 @@ function spellCheck(server: SpellCheckServer): Promise<string> {
 					10000,
 					spellCheckGot,
 					spellCheckFinished,
-					(): void => reject("부산대 서버의 접속 오류로 일부 문장 교정에 실패했습니다.")
+					(): void => reject("부산대 서버의 접속 오류로 맞춤법 교정에 실패했습니다.")
 				);
 				break;
 			default:
@@ -82,7 +103,7 @@ function spellCheck(server: SpellCheckServer): Promise<string> {
 					10000,
 					spellCheckGot,
 					spellCheckFinished,
-					(): void => reject("다음 서버의 접속 오류로 일부 문장 교정에 실패했습니다.")
+					(): void => reject("다음 서버의 접속 오류로 맞춤법 교정에 실패했습니다.")
 				);
 				break;
 		}

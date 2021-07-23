@@ -12,6 +12,7 @@ export function getHanspellDiagnostics(
   return hanspellDiagnostics.get(doc.uri) as HanspellDiagnostic[];
 }
 
+// vscode.window.showInformationMessage("createDiagnosticCollection called.",);
 const hanspellDiagnostics =
   vscode.languages.createDiagnosticCollection("hanspell");
 
@@ -91,6 +92,7 @@ export function subscribeHanspellDiagnosticsToDocumentChanges(
       vscode.window.activeTextEditor.document,
     );
   }
+  
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor(editor => {
       if (editor) {

@@ -51,7 +51,7 @@ function fixTypo(
 
 function fixAllTypos(
   args: {
-    document: vscode.TextDocument,
+    document: vscode.TextDocument
   }
 ) {
   let edit = new vscode.WorkspaceEdit();
@@ -60,7 +60,6 @@ function fixAllTypos(
   getHanspellDiagnostics(args.document).forEach(diagnostic => {
     edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);
   });
-
   vscode.workspace.applyEdit(edit);
 }
 
@@ -81,39 +80,46 @@ export class Hanspell implements vscode.CodeActionProvider {
   ): vscode.CodeAction[] {
     let actions: vscode.CodeAction[] = [];
 
-    const hanspellDiagnostics = context.diagnostics
-      .filter(diagnostic => diagnostic.code === HANSPELL_MENTION) as
+    if (!docs2typos.get(document) || !docs2typos.get(document).length) {
+      return actions;
+    }
+
+    const hanspellDiagnostics =
+      context.diagnostics
+        .filter(diagnostic => diagnostic.code === HANSPELL_MENTION) as
       HanspellDiagnostic[];
 
     hanspellDiagnostics.forEach(diagnostic => {
       actions = actions.concat(
-        this.createCommandCodeActions(
+        this.createFixTypoCommandCodeActions(
           diagnostic,
           document,
         )
       );
     });
 
-    let action = new vscode.CodeAction(
-      '모든 맞춤법 오류 교정',
-      vscode.CodeActionKind.QuickFix
-    );
+    if (hanspellDiagnostics.length) {
+      let action = new vscode.CodeAction(
+        '맞춤법 오류 모두 교정',
+        vscode.CodeActionKind.QuickFix
+      );
 
-    action.command = {
-      command: 'vscode-hanspell.fixAllTypos',
-      title: 'Fix all typos',
-      arguments: [{
-        document,
-      }],
-    };
-    action.diagnostics = [...context.diagnostics];
+      action.command = {
+        command: 'vscode-hanspell.fixAllTypos',
+        title: 'Fix all typos',
+        arguments: [{
+          document,
+        }],
+      };
+      action.diagnostics = [...context.diagnostics];
 
-    actions.push(action);
+      actions.push(action);
+    }
 
     return actions;
   }
 
-  private createCommandCodeActions(
+  private createFixTypoCommandCodeActions(
     diagnostic: HanspellDiagnostic,
     document: vscode.TextDocument
   ): vscode.CodeAction[] {
