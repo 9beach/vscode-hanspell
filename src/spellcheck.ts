@@ -1,26 +1,37 @@
+/**
+ * Defines `HanspellTypo` type and the functions for spellCheck commands, and
+ * creates dictionary for `vscode.TextDocument` to `HanspellTypo` array.
+ */
+
 import * as vscode from 'vscode';
 import * as minimatch from 'minimatch';
 import * as fs from 'fs';
 
-const hanspell = require('hanspell');
-
 import { refreshDiagnostics } from './diagnostics';
 
-/**
- * Dictionary for `vscode.TextDocument` to typos array.
- */
-export const docs2typos = new WeakMap();
+const hanspell = require('hanspell');
+
+/** Dictionary for `vscode.TextDocument` to `HanspellTypo` array. */
+const docs2typos = new WeakMap();
+
+export type HanspellTypo = {
+  token: string,
+  suggestions: string[];
+  info: string,
+  type: string
+};
+
+/** Gets typos of the document. */
+export const getTyposOfDocument =
+  (doc: vscode.TextDocument): HanspellTypo[] => docs2typos.get(doc);
+
+/** Spell check service type. */
+enum SpellCheckService { pnu = 0, daum }
 
 /**
- * Spell check service types.
- */
-enum SpellCheckService {
-  pnu = 0,
-  daum,
-}
-
-/**
- * Spell checks the active document by PNU service, and sets docs2typos map.
+ *  Spell checks the active document by PNU service, and sets docs2typos map.
+ * 
+ *  Called by 'vscode-hanspell.spellCheckByPNU' command.
  */
 export function spellCheckByPNU(): void {
   vscode.window.withProgress(
@@ -37,6 +48,8 @@ export function spellCheckByPNU(): void {
 
 /**
  * Spell checks the active document by DAUM service, and sets docs2typos map.
+ * 
+ * Called by 'vscode-hanspell.spellCheckByDAUM' command.
  */
  export function spellCheckByDAUM(): void {
   vscode.window.withProgress(
@@ -51,18 +64,14 @@ export function spellCheckByPNU(): void {
   );
 }
 
-/**
- * $HOME path for Microsoft Windows, MacOS, and Linux.
- */
-const homedir: string | undefined = process.env.HOME || process.env.USERPROFILE;
-
-/**
- * Spell checks the active document, and sets docs2typos map.
- */
-function spellCheck(server: SpellCheckService): Promise<string> {
+/** Adds glob patterns in `.hanspell-ignore` to avoid from spell check. */
+const getHanspellIgnore = (): string => {
+  const homedir = process.env.HOME || process.env.USERPROFILE;
   let ignores: string = '';
 
   try {
+    // Before: '이딸리아*\n톨스또이\n,'
+    // After: '{이딸리아*,톨스또이*,}'
     ignores = fs.readFileSync(`${homedir}/.hanspell-ignore`, 'utf8');
     ignores = ignores.replace(/[,{}]/g, '');
     ignores = `{${ignores.replace(/[\n ][\n ]*/g, ',')}}`;
@@ -70,8 +79,14 @@ function spellCheck(server: SpellCheckService): Promise<string> {
       ignores = '';
     }
   } catch (err) {
+    return '';
   }
-  
+
+  return ignores;
+};
+
+/** Spell checks the active document, and sets docs2typos map. */
+function spellCheck(server: SpellCheckService): Promise<string> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return new Promise((resolve, reject) => {
@@ -79,14 +94,16 @@ function spellCheck(server: SpellCheckService): Promise<string> {
     });
   };
 
+  const ignores = getHanspellIgnore();
+
   const doc = editor.document;
   const text = doc.getText(
     editor.selection.isEmpty ? undefined : editor.selection
   );
 
-  let typos: any[] = [];
+  let typos: HanspellTypo[] = [];
 
-  function spellCheckGot(response: any[]): void {
+  function spellCheckGot(response: HanspellTypo[]): void {
     typos = typos.concat(response);
   }
 
@@ -125,14 +142,12 @@ function spellCheck(server: SpellCheckService): Promise<string> {
   });
 }
 
-/**
- * Removes the duplicated tokens from the typos array.
- */
-function uniq(typos: any): any[] {
+/** Removes the duplicated tokens from the typos array. */
+function uniq(typos: HanspellTypo[]): HanspellTypo[] {
   if (typos.length === 0) {
     return typos;
   }
-  let sorted = typos.sort((a: any, b: any): number => {
+  let sorted = typos.sort((a: HanspellTypo, b: HanspellTypo): number => {
     if (a.token < b.token) {
       return -1;
     } else if (a.token > b.token) {

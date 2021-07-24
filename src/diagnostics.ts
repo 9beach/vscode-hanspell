@@ -1,22 +1,23 @@
+/**
+ * Defines diagnostic data structure containing a typo for a range of a 
+ * document.
+ */
+
+import { type } from 'os';
 import * as vscode from 'vscode';
-import {
-  docs2typos
-} from './spellcheck';
+
+import { getTyposOfDocument, HanspellTypo } from './spellcheck';
 
 /**
  * Used to associate diagnostic entries with code actions.
  */
 export const HANSPELL_MENTION = 'hanspell';
 
-/**
- * Dictionary for `vscode.TextDocument` to diagnostics.
- */
+/** Dictionary for `vscode.TextDocument` to `HanspellDiagnostic`. */
 const hanspellDiagnostics =
   vscode.languages.createDiagnosticCollection("hanspell");
 
-/**
- * Returns the diagnostics for the given document.
- */
+/** Returns the diagnostics for the given document. */
 export function getHanspellDiagnostics(
   doc: vscode.TextDocument
 ): HanspellDiagnostic[] {
@@ -24,14 +25,12 @@ export function getHanspellDiagnostics(
 }
 
 /**
- * Refreshes the diagnostics for the given document from docs2typos.
+ * Makes the diagnostics out of typos of document.
  * 
  * Automatically called when the document is edited.
  */
-export function refreshDiagnostics(
-  doc: vscode.TextDocument
-): void {
-  const typos = docs2typos.get(doc);
+export function refreshDiagnostics(doc: vscode.TextDocument): void {
+  const typos = getTyposOfDocument(doc);
 
   if (!typos) {
     return;
@@ -39,7 +38,7 @@ export function refreshDiagnostics(
 
   const diagnostics: vscode.Diagnostic[] = [];
 
-  typos.forEach((typo: any) => {
+  typos.forEach((typo: HanspellTypo) => {
     for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
       const lineOfText = doc.lineAt(lineIndex);
 
@@ -55,30 +54,36 @@ export function refreshDiagnostics(
   hanspellDiagnostics.set(doc.uri, diagnostics);
 }
 
-/**
- * Diagnostic data structure for spell checks and code actions.
- */
+/** Diagnostic data structure containing a typo for a range of a document. */
 export class HanspellDiagnostic extends vscode.Diagnostic {
-  typo: any;
+  typo: HanspellTypo;
 
   constructor(
-    typo: any,
     range: vscode.Range,
     message: string,
-    severity?: vscode.DiagnosticSeverity | undefined
+    typo: HanspellTypo
   ) {
-    super(range, message, severity);
+    super(range, message, vscode.DiagnosticSeverity.Warning);
     this.typo = typo;
   }
 }
 
-/**
- * Creates a diagnostic for spell check and code action.
- */
+/** PNU service has good typo.info, but DAUM service does not. So we ... */
+function getTypoInfo(typo: HanspellTypo): string {
+  if (typo.info) {
+    return typo.info;
+  } else if (typo.type == 'space') {
+    return '띄어쓰기 오류';
+  } else {
+    return '맞춤법 오류';
+  }
+}
+
+/** Creates a diagnostic for the given typo and range. */
 function createDiagnostic(
   lineIndex: number,
   column: number,
-  typo: any
+  typo: HanspellTypo
 ): HanspellDiagnostic {
   const range = new vscode.Range(
     lineIndex,
@@ -87,21 +92,13 @@ function createDiagnostic(
     column + typo.token.length,
   );
 
-  const diagnostic =
-    new HanspellDiagnostic(
-      typo,
-      range,
-      typo.info ? typo.info : '맞춤법 교정',
-      vscode.DiagnosticSeverity.Warning
-    );
+  const diagnostic = new HanspellDiagnostic(range, getTypoInfo(typo), typo);
   diagnostic.code = HANSPELL_MENTION;
 
   return diagnostic;
 }
 
-/**
- * Subscribes `refreshDiagnostics` to documents change events.
- */
+/** Subscribes `refreshDiagnostics` to documents change events. */
 export function subscribeHanspellDiagnosticsToDocumentChanges(
   context: vscode.ExtensionContext,
 ): void {
