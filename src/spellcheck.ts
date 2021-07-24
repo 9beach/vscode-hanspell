@@ -126,7 +126,8 @@ function spellCheck(server: SpellCheckService): Promise<string> {
           10000,
           spellCheckGot,
           spellCheckFinished,
-          (): void => reject("부산대 서비스 접속 오류로 맞춤법 교정에 실패했습니다.")
+          (): void =>
+            reject("부산대 서비스 접속 오류로 맞춤법 교정에 실패했습니다.")
         );
         break;
       default:
@@ -135,7 +136,8 @@ function spellCheck(server: SpellCheckService): Promise<string> {
           10000,
           spellCheckGot,
           spellCheckFinished,
-          (): void => reject("다음 서비스 접속 오류로 맞춤법 교정에 실패했습니다.")
+          (): void =>
+            reject("다음 서비스 접속 오류로 맞춤법 교정에 실패했습니다.")
         );
         break;
     }
