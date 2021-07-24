@@ -72,7 +72,7 @@ export class HanspellDiagnostic extends vscode.Diagnostic {
 function getTypoInfo(typo: HanspellTypo): string {
   if (typo.info) {
     return typo.info;
-  } else if (typo.type == 'space') {
+  } else if (typo.type === 'space') {
     return '띄어쓰기 오류';
   } else {
     return '맞춤법 오류';
