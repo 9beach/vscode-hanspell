@@ -1,6 +1,6 @@
-# 비주얼 스튜디오 코드 한스펠 <sup>vscode-hanspell</sup>
+# 비주얼 스튜디오 코드 한스펠
 
-<i>비주얼 스튜디오 코드 한스펠<sup>vscode-hanspell</sup></i>은, (주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스를 이용해서 한글 맞춤법 검사 기능을 제공하는 [비주얼 스튜디오 코드](https://code.visualstudio.com)용 [익스텐션](https://code.visualstudio.com/docs/editor/extension-marketplace)입니다.
+[비주얼 스튜디오 코드 한스펠](https://github.com/9beach/vscode-hanspell)(vscode-hanspell)은, (주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스를 이용해서 한글 맞춤법 검사 기능을 제공하는 [비주얼 스튜디오 코드](https://code.visualstudio.com)용 [익스텐션](https://code.visualstudio.com/docs/editor/extension-marketplace)입니다.
 
 터미널과 커맨드 라인 팬에게는 [hanspell](https://github.com/9beach/hanspell)을 추천합니다.
 
@@ -36,14 +36,16 @@
 
 러시아의 작가 톨스토이를 톨스또이로 쓰고 맞춤법 검사를 피하고 싶다면 홈 디렉터리에 `.hanspell-ignore` 파일을 만들고 '톨스또이*'를 등록하세요.
 
-```
+```txt
 톨스또이*
 이딸리아
 ```
+
 위와 같이 등록하면 맞춤법 오류 중 '톨스또이', '톨스토이가' 등 '톨스또이'로 시작하는 오류는 제외하고 표시합니다. 반면 '이딸리아'는 제외하지만 '이딸리아에서'는 오류로 표시합니다.
 
  `.hanspell-ignore`는 [글로브 패턴](https://ko.wikipedia.org/wiki/글로브_(프로그래밍))을 지원합니다. 아래의 예는 마크다운 문법과 URL, 영어 등을 맞춤법 검사에서 제외하고 싶을 때 유용합니다.
-```
+
+```txt
 ![*
 *<*>*
 .[[]*
