@@ -18,23 +18,23 @@
 
 문서의 특정 영역을 마우스로 드래그해서 선택했다면 해당 영역만 검사합니다. 원하는 부분만 검사할 수 있어 유용합니다.
 
-![commands](images/hanspell-commands.png)
+![commands](https://github.com/9beach/vscode-hanspell/raw/HEAD/images/hanspell-commands.png)
 
 ### 맞춤법 교정
 
 맞춤법 검사를 마치면 오류가 의심되는 문자열에 붉은 밑줄이 생깁니다. 해당 문자열을 클릭하거나 커서를 옮기면 왼쪽에 녹색 전구가 생기고, 이것을 클릭하면 아래와 같이 추천 단어와 `맞춤법 오류 모두 교정` 메뉴가 뜹니다. 이 메뉴로 맞춤법을 교정합니다.
 
-![command actions](images/hanspell-command-actions.png)
+![command actions](https://github.com/9beach/vscode-hanspell/raw/HEAD/images/hanspell-command-actions.png)
 
 ### 맞춤법 오류 정보
 
 마우스를 붉은 밑줄 위로 옮기면 맞춤법 오류를 설명하는 작은 창이 뜹니다. 아래와 같이 분석 결과창(`⇧⌘M`)에서 한눈에 볼 수도 있습니다. (주)다음의 서비스에 비해 맞춤법 오류의 근거를 자세히 설명한다는 점은 부산대 서비스의 장점입니다만, 접속 장애가 잦다는 단점도 있습니다.
 
-![message](images/hanspell-problems.png)
+![message](https://github.com/9beach/vscode-hanspell/raw/HEAD/images/hanspell-problems.png)
 
 ### 맞춤법 검사 제외 단어 지정
 
-러시아의 작가 톨스토이를 톨스또이로 쓰고 맞춤법 검사를 피하려면 홈 디렉터리에 `.hanspell-ignore` 파일을 만들고 '톨스또이*'를 등록하세요.
+러시아의 작가 톨스토이를 톨스또이로 쓰고 맞춤법 검사를 피하고 싶다면 홈 디렉터리에 `.hanspell-ignore` 파일을 만들고 '톨스또이*'를 등록하세요.
 
 ```
 톨스또이*
