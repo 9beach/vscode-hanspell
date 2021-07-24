@@ -13,7 +13,7 @@ import { getTyposOfDocument, HanspellTypo } from './spellcheck';
  */
 export const HANSPELL_MENTION = 'hanspell';
 
-/** Dictionary for `vscode.TextDocument` to `HanspellDiagnostic`. */
+/** Dictionary of `vscode.TextDocument` to `HanspellDiagnostic[]`. */
 const hanspellDiagnostics =
   vscode.languages.createDiagnosticCollection("hanspell");
 

@@ -1,6 +1,6 @@
 /**
  * Defines `HanspellTypo` type and the functions for spellCheck commands, and
- * creates dictionary for `vscode.TextDocument` to `HanspellTypo` array.
+ * creates dictionary of `vscode.TextDocument` to `HanspellTypo[]`.
  */
 
 import * as vscode from 'vscode';
@@ -11,7 +11,7 @@ import { refreshDiagnostics } from './diagnostics';
 
 const hanspell = require('hanspell');
 
-/** Dictionary for `vscode.TextDocument` to `HanspellTypo` array. */
+/** Dictionary of `vscode.TextDocument` to `HanspellTypo[]`. */
 const docs2typos = new WeakMap();
 
 export type HanspellTypo = {
