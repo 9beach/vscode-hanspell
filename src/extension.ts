@@ -1,6 +1,6 @@
 /**
  * Defines the functions for the code action commands, and registers spellCheck 
- * commands, `refreshDiagnostics`, and them once the extension is activated.
+ * commands, `refreshDiagnostics`, and them.
  */
 
 import * as vscode from 'vscode';
