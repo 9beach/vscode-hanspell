@@ -1,12 +1,11 @@
 /**
  * Defines HanspellCodeAction.
- * 
+ *
  * HanspellTypo makes HanspellDiagnostic makes HanspellCodeAction.
  */
 
 import * as vscode from 'vscode';
 import { HANSPELL_MENTION, HanspellDiagnostic } from './diagnostics';
-import { getTyposOfDocument } from './spellcheck';
 
 /**
  * Provides code actions for the commands of vscode-hanspell.fixTypo and
@@ -14,52 +13,44 @@ import { getTyposOfDocument } from './spellcheck';
  */
 export class HanspellCodeAction implements vscode.CodeActionProvider {
   public static readonly providedCodeActionKinds = [
-    vscode.CodeActionKind.QuickFix
+    vscode.CodeActionKind.QuickFix,
   ];
 
   provideCodeActions(
     document: vscode.TextDocument,
     range: vscode.Range | vscode.Selection,
     context: vscode.CodeActionContext,
-    token: vscode.CancellationToken,
+    token: vscode.CancellationToken
   ): vscode.CodeAction[] {
     let actions: vscode.CodeAction[] = [];
 
-    if (!getTyposOfDocument(document) || !getTyposOfDocument(document).length) {
-      return actions;
+    const hanspellDiagnostics = context.diagnostics.filter(
+      (d) => d.code === HANSPELL_MENTION
+    ) as HanspellDiagnostic[];
+
+    if (!hanspellDiagnostics.length) {
+      return [];
     }
 
-    const hanspellDiagnostics =
-      context.diagnostics
-        .filter(diagnostic => diagnostic.code === HANSPELL_MENTION) as
-      HanspellDiagnostic[];
-
-    hanspellDiagnostics.forEach(diagnostic => {
+    hanspellDiagnostics.forEach((diagnostic) => {
       actions = actions.concat(
-        this.createFixTypoCommandCodeActions(
-          diagnostic,
-          document,
-        )
+        this.createFixTypoCommandCodeActions(diagnostic, document)
       );
     });
 
-    if (hanspellDiagnostics.length) {
-      let action = new vscode.CodeAction(
-        '맞춤법 오류 모두 교정',
-        vscode.CodeActionKind.QuickFix
-      );
+    let action = new vscode.CodeAction(
+      '맞춤법 오류 모두 교정',
+      vscode.CodeActionKind.QuickFix
+    );
 
-      action.command = {
-        command: 'vscode-hanspell.fixAllTypos',
-        title: 'Fix all typos',
-        arguments: [{
-          document,
-        }],
-      };
-      action.diagnostics = [...context.diagnostics];
+    action.command = {
+      command: 'vscode-hanspell.fixAllTypos',
+      title: 'Fix all typos',
+      arguments: [{ document }],
+    };
+    action.diagnostics = [...context.diagnostics];
 
-      actions.push(action);
-    }
+    actions.push(action);
 
     return actions;
   }
@@ -78,11 +69,7 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
       action.command = {
         command: 'vscode-hanspell.fixTypo',
         title: 'Fix a typo',
-        arguments: [{
-          document,
-          suggestion,
-          'range': diagnostic.range,
-        }],
+        arguments: [{ document, suggestion, range: diagnostic.range }],
       };
       action.diagnostics = [diagnostic];
 

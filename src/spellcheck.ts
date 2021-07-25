@@ -15,22 +15,25 @@ const hanspell = require('hanspell');
 const docs2typos = new WeakMap();
 
 export type HanspellTypo = {
-  token: string,
+  token: string;
   suggestions: string[];
-  info: string,
-  type: string
+  info: string;
+  type: string;
 };
 
 /** Gets typos of the document. */
-export const getTyposOfDocument =
-  (doc: vscode.TextDocument): HanspellTypo[] => docs2typos.get(doc);
+export const getTyposOfDocument = (doc: vscode.TextDocument): HanspellTypo[] =>
+  docs2typos.get(doc);
 
 /** Spell check service type. */
-enum SpellCheckService { pnu = 0, daum }
+enum SpellCheckService {
+  pnu = 0,
+  daum,
+}
 
 /**
  *  Spell checks the active document by PNU service, and sets docs2typos map.
- * 
+ *
  *  Called by 'vscode-hanspell.spellCheckByPNU' command.
  */
 export function spellCheckByPNU(): void {
@@ -38,29 +41,31 @@ export function spellCheckByPNU(): void {
     {
       location: vscode.ProgressLocation.Notification,
       title: '맞춤법 검사(부산대) 중입니다.',
-      cancellable: true
+      cancellable: true,
     },
-    () => spellCheck(SpellCheckService.pnu).catch(err => {
-      vscode.window.showInformationMessage(err);
-    })
+    () =>
+      spellCheck(SpellCheckService.pnu).catch((err) => {
+        vscode.window.showInformationMessage(err);
+      })
   );
 }
 
 /**
  * Spell checks the active document by DAUM service, and sets docs2typos map.
- * 
+ *
  * Called by 'vscode-hanspell.spellCheckByDAUM' command.
  */
- export function spellCheckByDAUM(): void {
+export function spellCheckByDAUM(): void {
   vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
       title: '맞춤법 검사(다음) 중입니다.',
       cancellable: true,
     },
-    () => spellCheck(SpellCheckService.daum).catch(err => {
-      vscode.window.showInformationMessage(err);
-    })
+    () =>
+      spellCheck(SpellCheckService.daum).catch((err) => {
+        vscode.window.showInformationMessage(err);
+      })
   );
 }
 
@@ -70,8 +75,7 @@ const getHanspellIgnore = (): string => {
   let ignores: string = '';
 
   try {
-    // Before: '이딸리아*\n톨스또이\n,'
-    // After: '{이딸리아*,톨스또이*,}'
+    // '이딸리아*\n톨스또이\n,' => '{이딸리아*,톨스또이*,}'.
     ignores = fs.readFileSync(`${homedir}/.hanspell-ignore`, 'utf8');
     ignores = ignores.replace(/[,{}]/g, '');
     ignores = `{${ignores.replace(/[\n ][\n ]*/g, ',')}}`;
@@ -90,9 +94,9 @@ function spellCheck(server: SpellCheckService): Promise<string> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return new Promise((resolve, reject) => {
-      return reject("먼저 검사할 문서를 선택하세요.");
+      return reject('먼저 검사할 문서를 선택하세요.');
     });
-  };
+  }
 
   const ignores = getHanspellIgnore();
 
@@ -112,11 +116,11 @@ function spellCheck(server: SpellCheckService): Promise<string> {
       docs2typos.set(
         doc,
         ignores
-          ? uniq(typos).filter(typo => !minimatch(typo.token, ignores))
+          ? uniq(typos).filter((typo) => !minimatch(typo.token, ignores))
           : uniq(typos)
       );
       refreshDiagnostics(doc);
-      resolve("맞춤법 검사를 마쳤습니다.");
+      resolve('맞춤법 검사를 마쳤습니다.');
     }
 
     switch (server) {
@@ -127,7 +131,7 @@ function spellCheck(server: SpellCheckService): Promise<string> {
           spellCheckGot,
           spellCheckFinished,
           (): void =>
-            reject("부산대 서비스 접속 오류로 맞춤법 교정에 실패했습니다.")
+            reject('부산대 서비스 접속 오류로 맞춤법 교정에 실패했습니다.')
         );
         break;
       default:
@@ -137,7 +141,7 @@ function spellCheck(server: SpellCheckService): Promise<string> {
           spellCheckGot,
           spellCheckFinished,
           (): void =>
-            reject("다음 서비스 접속 오류로 맞춤법 교정에 실패했습니다.")
+            reject('다음 서비스 접속 오류로 맞춤법 교정에 실패했습니다.')
         );
         break;
     }
@@ -158,11 +162,11 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
       return 0;
     }
   });
-  
+
   let left = [sorted[0]];
-  
+
   for (let i = 1; i < typos.length; i++) {
-    if (sorted[i-1].token !== sorted[i].token) {
+    if (sorted[i - 1].token !== sorted[i].token) {
       left.push(sorted[i]);
     }
   }

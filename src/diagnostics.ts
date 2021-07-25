@@ -1,9 +1,8 @@
 /**
- * Defines diagnostic data structure containing a typo for a range of a 
+ * Defines diagnostic data structure containing a typo for a range of a
  * document.
  */
 
-import { type } from 'os';
 import * as vscode from 'vscode';
 
 import { getTyposOfDocument, HanspellTypo } from './spellcheck';
@@ -15,7 +14,7 @@ export const HANSPELL_MENTION = 'hanspell';
 
 /** Dictionary of `vscode.TextDocument` to `HanspellDiagnostic[]`. */
 const hanspellDiagnostics =
-  vscode.languages.createDiagnosticCollection("hanspell");
+  vscode.languages.createDiagnosticCollection('hanspell');
 
 /** Returns the diagnostics for the given document. */
 export function getHanspellDiagnostics(
@@ -26,7 +25,7 @@ export function getHanspellDiagnostics(
 
 /**
  * Makes the diagnostics out of typos of document.
- * 
+ *
  * Automatically called when the document is edited.
  */
 export function refreshDiagnostics(doc: vscode.TextDocument): void {
@@ -40,12 +39,12 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
 
   typos.forEach((typo: HanspellTypo) => {
     for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
-      const lineOfText = doc.lineAt(lineIndex);
+      const line = doc.lineAt(lineIndex).text;
 
       let start = 0;
       let found = -1;
-      while (found = lineOfText.text.indexOf(typo.token, start), found !== -1) {
-        diagnostics.push(createDiagnostic(lineIndex, found, typo));
+      while (((found = line.indexOf(typo.token, start)), found !== -1)) {
+        diagnostics.push(new HanspellDiagnostic(lineIndex, found, typo));
         start = found + 1;
       }
     }
@@ -58,13 +57,18 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
 export class HanspellDiagnostic extends vscode.Diagnostic {
   typo: HanspellTypo;
 
-  constructor(
-    range: vscode.Range,
-    message: string,
-    typo: HanspellTypo
-  ) {
-    super(range, message, vscode.DiagnosticSeverity.Warning);
+  constructor(lineIndex: number, column: number, typo: HanspellTypo) {
+    const range = new vscode.Range(
+      lineIndex,
+      column,
+      lineIndex,
+      column + typo.token.length
+    );
+
+    super(range, getTypoInfo(typo), vscode.DiagnosticSeverity.Warning);
+
     this.typo = typo;
+    this.code = HANSPELL_MENTION;
   }
 }
 
@@ -79,39 +83,18 @@ function getTypoInfo(typo: HanspellTypo): string {
   }
 }
 
-/** Creates a diagnostic for the given typo and range. */
-function createDiagnostic(
-  lineIndex: number,
-  column: number,
-  typo: HanspellTypo
-): HanspellDiagnostic {
-  const range = new vscode.Range(
-    lineIndex,
-    column,
-    lineIndex,
-    column + typo.token.length,
-  );
-
-  const diagnostic = new HanspellDiagnostic(range, getTypoInfo(typo), typo);
-  diagnostic.code = HANSPELL_MENTION;
-
-  return diagnostic;
-}
-
 /** Subscribes `refreshDiagnostics` to documents change events. */
 export function subscribeHanspellDiagnosticsToDocumentChanges(
-  context: vscode.ExtensionContext,
+  context: vscode.ExtensionContext
 ): void {
   context.subscriptions.push(hanspellDiagnostics);
 
   if (vscode.window.activeTextEditor) {
-    refreshDiagnostics(
-      vscode.window.activeTextEditor.document,
-    );
+    refreshDiagnostics(vscode.window.activeTextEditor.document);
   }
-  
+
   context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(editor => {
+    vscode.window.onDidChangeActiveTextEditor((editor) => {
       if (editor) {
         refreshDiagnostics(editor.document);
       }
@@ -119,14 +102,14 @@ export function subscribeHanspellDiagnosticsToDocumentChanges(
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument(
-      e => refreshDiagnostics(e.document)
+    vscode.workspace.onDidChangeTextDocument((e) =>
+      refreshDiagnostics(e.document)
     )
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidCloseTextDocument(
-      doc => hanspellDiagnostics.delete(doc.uri)
+    vscode.workspace.onDidCloseTextDocument((doc) =>
+      hanspellDiagnostics.delete(doc.uri)
     )
   );
 }
