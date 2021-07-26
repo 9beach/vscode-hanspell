@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import * as match from 'micromatch';
+import { Minimatch } from 'minimatch';
 
 const hanspell = require('hanspell');
 
@@ -70,21 +70,21 @@ export function spellCheckByDAUM(): void {
 }
 
 /** Reads glob patterns in `.hanspell-ignore` to avoid from spell check. */
-const getHanspellIgnore = (): string[] => {
-  const homedir = process.env.HOME || process.env.USERPROFILE;
-  let ignores: string[] = [];
-
-  return ignores;
+function getHanspellIgnore(): string {
   try {
-    // '이딸리아*\n톨스또이\n,' => ['이딸리아*','톨스또이*'].
-    const buf = fs.readFileSync(`${homedir}/.hanspell-ignore`, 'utf8');
-    ignores = buf.split(/\r?\n/).filter(line => !!line);
+    // '이딸리아*\n톨스또이\n,' => '{이딸리아*,톨스또이*,}'.
+    const homedir = process.env.HOME || process.env.USERPROFILE;
+    let ignores = fs.readFileSync(`${homedir}/.hanspell-ignore`, 'utf8');
+    ignores = ignores.replace(/[,{}]/g, '');
+    ignores = `{${ignores.replace(/[\n ][\n ]*/g, ',')}}`;
+    if (ignores.length < 4) {
+      ignores = '';
+    }
+    return ignores;
   } catch (err) {
-    return [];
+    return '';
   }
-
-  return ignores;
-};
+}
 
 /** Spell checks the active document, and sets docs2typos map. */
 function spellCheck(server: SpellCheckService): Promise<string> {
@@ -94,8 +94,6 @@ function spellCheck(server: SpellCheckService): Promise<string> {
       return reject('먼저 검사할 문서를 선택하세요.');
     });
   }
-
-  const ignores = getHanspellIgnore();
 
   const doc = editor.document;
   const text = doc.getText(
@@ -110,12 +108,14 @@ function spellCheck(server: SpellCheckService): Promise<string> {
 
   return new Promise((resolve, reject) => {
     function spellCheckFinished(): void {
+      const ignores = new Minimatch(getHanspellIgnore());
       docs2typos.set(
         doc,
-        ignores.length
-          ? uniq(typos).filter((typo) => !match.isMatch(typo.token, ignores))
+        !ignores.empty
+          ? uniq(typos).filter((typo) => !ignores.match(typo.token))
           : uniq(typos)
       );
+
       refreshDiagnostics(doc);
       resolve('맞춤법 검사를 마쳤습니다.');
     }
