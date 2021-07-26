@@ -4,7 +4,7 @@
  */
 
 import * as vscode from 'vscode';
-import * as minimatch from 'minimatch';
+import * as match from 'micromatch';
 import * as fs from 'fs';
 
 import { refreshDiagnostics } from './diagnostics';
@@ -69,21 +69,17 @@ export function spellCheckByDAUM(): void {
   );
 }
 
-/** Adds glob patterns in `.hanspell-ignore` to avoid from spell check. */
-const getHanspellIgnore = (): string => {
+/** Reads glob patterns in `.hanspell-ignore` to avoid from spell check. */
+const getHanspellIgnore = (): string[] => {
   const homedir = process.env.HOME || process.env.USERPROFILE;
-  let ignores: string = '';
+  let ignores: string[] = [];
 
   try {
-    // '이딸리아*\n톨스또이\n,' => '{이딸리아*,톨스또이*,}'.
-    ignores = fs.readFileSync(`${homedir}/.hanspell-ignore`, 'utf8');
-    ignores = ignores.replace(/[,{}]/g, '');
-    ignores = `{${ignores.replace(/[\n ][\n ]*/g, ',')}}`;
-    if (ignores.length < 4) {
-      ignores = '';
-    }
+    // '이딸리아*\n톨스또이\n,' => ['이딸리아*','톨스또이*'].
+    const buf = fs.readFileSync(`${homedir}/.hanspell-ignore`, 'utf8');
+    ignores = buf.split(/\r?\n/).filter(line => !!line);
   } catch (err) {
-    return '';
+    return [];
   }
 
   return ignores;
@@ -113,14 +109,16 @@ function spellCheck(server: SpellCheckService): Promise<string> {
 
   return new Promise((resolve, reject) => {
     function spellCheckFinished(): void {
+      console.log(JSON.stringify(ignores));
       docs2typos.set(
         doc,
-        ignores
-          ? uniq(typos).filter((typo) => !minimatch(typo.token, ignores))
+        ignores.length
+          ? uniq(typos).filter((typo) => !match.isMatch(typo.token, ignores))
           : uniq(typos)
       );
       refreshDiagnostics(doc);
       resolve('맞춤법 검사를 마쳤습니다.');
+      console.log(JSON.stringify(docs2typos.get(doc)));
     }
 
     switch (server) {
