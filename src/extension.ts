@@ -27,6 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
+
   // Binds code action commands to corresponding functions.
   context.subscriptions.push(
     vscode.commands.registerCommand('vscode-hanspell.fixTypo', fixTypo)
@@ -42,6 +43,7 @@ export function activate(context: vscode.ExtensionContext) {
       spellCheckByDAUM
     )
   );
+
   context.subscriptions.push(
     vscode.commands.registerCommand(
       'vscode-hanspell.spellCheckByPNU',

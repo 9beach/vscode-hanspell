@@ -4,12 +4,12 @@
  */
 
 import * as vscode from 'vscode';
-import * as match from 'micromatch';
 import * as fs from 'fs';
-
-import { refreshDiagnostics } from './diagnostics';
+import * as match from 'micromatch';
 
 const hanspell = require('hanspell');
+
+import { refreshDiagnostics } from './diagnostics';
 
 /** Dictionary of `vscode.TextDocument` to `HanspellTypo[]`. */
 const docs2typos = new WeakMap();
@@ -74,6 +74,7 @@ const getHanspellIgnore = (): string[] => {
   const homedir = process.env.HOME || process.env.USERPROFILE;
   let ignores: string[] = [];
 
+  return ignores;
   try {
     // '이딸리아*\n톨스또이\n,' => ['이딸리아*','톨스또이*'].
     const buf = fs.readFileSync(`${homedir}/.hanspell-ignore`, 'utf8');
@@ -109,7 +110,6 @@ function spellCheck(server: SpellCheckService): Promise<string> {
 
   return new Promise((resolve, reject) => {
     function spellCheckFinished(): void {
-      console.log(JSON.stringify(ignores));
       docs2typos.set(
         doc,
         ignores.length
@@ -118,7 +118,6 @@ function spellCheck(server: SpellCheckService): Promise<string> {
       );
       refreshDiagnostics(doc);
       resolve('맞춤법 검사를 마쳤습니다.');
-      console.log(JSON.stringify(docs2typos.get(doc)));
     }
 
     switch (server) {
