@@ -18,8 +18,17 @@ suite('SpellCheck Test Suite', () => {
     assert.strictEqual(true, match('a/a', 'a*/**'));
     assert.strictEqual(false, match('a/a', 'a*'));
 
-    assert.strictEqual(true, match('[a.a/', '*[[!.a-zA-Z0-9:<>]*[[!.a-zA-Z0-9:<>]*'));
-    assert.strictEqual(true, match('[a.a/a/b/c', '*[[!.a-zA-Z0-9:<>]*[[!.a-zA-Z0-9:<>]*/**'));
-    assert.strictEqual(true, match('[a.a', '*[[!.a-zA-Z0-9:<>]*[[!.a-zA-Z0-9:<>]*'));
+    assert.strictEqual(
+      true,
+      match('[a.a/', '*[[!.a-zA-Z0-9:<>]*[[!.a-zA-Z0-9:<>]*'),
+    );
+    assert.strictEqual(
+      true,
+      match('[a.a/a/b/c', '*[[!.a-zA-Z0-9:<>]*[[!.a-zA-Z0-9:<>]*/**'),
+    );
+    assert.strictEqual(
+      true,
+      match('[a.a', '*[[!.a-zA-Z0-9:<>]*[[!.a-zA-Z0-9:<>]*'),
+    );
   });
 });
