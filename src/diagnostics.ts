@@ -18,7 +18,7 @@ const hanspellDiagnostics =
 
 /** Returns the diagnostics for the given document. */
 export function getHanspellDiagnostics(
-  doc: vscode.TextDocument
+  doc: vscode.TextDocument,
 ): HanspellDiagnostic[] {
   return hanspellDiagnostics.get(doc.uri) as HanspellDiagnostic[];
 }
@@ -62,7 +62,7 @@ export class HanspellDiagnostic extends vscode.Diagnostic {
       lineIndex,
       column,
       lineIndex,
-      column + typo.token.length
+      column + typo.token.length,
     );
 
     super(range, getTypoInfo(typo), vscode.DiagnosticSeverity.Warning);
@@ -85,7 +85,7 @@ function getTypoInfo(typo: HanspellTypo): string {
 
 /** Subscribes `refreshDiagnostics` to documents change events. */
 export function subscribeHanspellDiagnosticsToDocumentChanges(
-  context: vscode.ExtensionContext
+  context: vscode.ExtensionContext,
 ): void {
   context.subscriptions.push(hanspellDiagnostics);
 
@@ -94,22 +94,22 @@ export function subscribeHanspellDiagnosticsToDocumentChanges(
   }
 
   context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor((editor) => {
+    vscode.window.onDidChangeActiveTextEditor(editor => {
       if (editor) {
         refreshDiagnostics(editor.document);
       }
-    })
+    }),
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument((e) =>
-      refreshDiagnostics(e.document)
-    )
+    vscode.workspace.onDidChangeTextDocument(e =>
+      refreshDiagnostics(e.document),
+    ),
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidCloseTextDocument((doc) =>
-      hanspellDiagnostics.delete(doc.uri)
-    )
+    vscode.workspace.onDidCloseTextDocument(doc =>
+      hanspellDiagnostics.delete(doc.uri),
+    ),
   );
 }

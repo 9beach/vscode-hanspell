@@ -20,12 +20,12 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
     document: vscode.TextDocument,
     range: vscode.Range | vscode.Selection,
     context: vscode.CodeActionContext,
-    token: vscode.CancellationToken
+    token: vscode.CancellationToken,
   ): vscode.CodeAction[] {
     let actions: vscode.CodeAction[] = [];
 
     const hanspellDiagnostics = context.diagnostics.filter(
-      (d) => d.code === HANSPELL_MENTION
+      (d) => d.code === HANSPELL_MENTION,
     ) as HanspellDiagnostic[];
 
     if (!hanspellDiagnostics.length) {
@@ -34,13 +34,13 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
 
     hanspellDiagnostics.forEach((diagnostic) => {
       actions = actions.concat(
-        this.createFixTypoCommandCodeActions(diagnostic, document)
+        this.createFixTypoCommandCodeActions(diagnostic, document),
       );
     });
 
     let action = new vscode.CodeAction(
       '맞춤법 오류 모두 교정',
-      vscode.CodeActionKind.QuickFix
+      vscode.CodeActionKind.QuickFix,
     );
 
     action.command = {
@@ -57,14 +57,14 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
 
   private createFixTypoCommandCodeActions(
     diagnostic: HanspellDiagnostic,
-    document: vscode.TextDocument
+    document: vscode.TextDocument,
   ): vscode.CodeAction[] {
     let actions: vscode.CodeAction[] = [];
 
     diagnostic.typo.suggestions.forEach((suggestion: string) => {
       const action = new vscode.CodeAction(
         `⤷ ${suggestion}`,
-        vscode.CodeActionKind.QuickFix
+        vscode.CodeActionKind.QuickFix,
       );
       action.command = {
         command: 'vscode-hanspell.fixTypo',

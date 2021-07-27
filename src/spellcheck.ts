@@ -44,9 +44,9 @@ export function spellCheckByPNU(): void {
       cancellable: true,
     },
     () =>
-      spellCheck(SpellCheckService.pnu).catch((err) => {
+      spellCheck(SpellCheckService.pnu).catch(err => {
         vscode.window.showInformationMessage(err);
-      })
+      }),
   );
 }
 
@@ -63,9 +63,9 @@ export function spellCheckByDAUM(): void {
       cancellable: true,
     },
     () =>
-      spellCheck(SpellCheckService.daum).catch((err) => {
+      spellCheck(SpellCheckService.daum).catch(err => {
         vscode.window.showInformationMessage(err);
-      })
+      }),
   );
 }
 
@@ -97,7 +97,7 @@ function spellCheck(server: SpellCheckService): Promise<string> {
 
   const doc = editor.document;
   const text = doc.getText(
-    editor.selection.isEmpty ? undefined : editor.selection
+    editor.selection.isEmpty ? undefined : editor.selection,
   );
 
   let typos: HanspellTypo[] = [];
@@ -112,8 +112,8 @@ function spellCheck(server: SpellCheckService): Promise<string> {
       docs2typos.set(
         doc,
         !ignores.empty
-          ? uniq(typos).filter((typo) => !ignores.match(typo.token))
-          : uniq(typos)
+          ? uniq(typos).filter(typo => !ignores.match(typo.token))
+          : uniq(typos),
       );
 
       refreshDiagnostics(doc);
@@ -128,7 +128,7 @@ function spellCheck(server: SpellCheckService): Promise<string> {
           spellCheckGot,
           spellCheckFinished,
           (): void =>
-            reject('부산대 서비스 접속 오류로 맞춤법 교정에 실패했습니다.')
+            reject('부산대 서비스 접속 오류로 맞춤법 교정에 실패했습니다.'),
         );
         break;
       default:
@@ -138,7 +138,7 @@ function spellCheck(server: SpellCheckService): Promise<string> {
           spellCheckGot,
           spellCheckFinished,
           (): void =>
-            reject('다음 서비스 접속 오류로 맞춤법 교정에 실패했습니다.')
+            reject('다음 서비스 접속 오류로 맞춤법 교정에 실패했습니다.'),
         );
         break;
     }

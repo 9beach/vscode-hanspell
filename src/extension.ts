@@ -23,32 +23,31 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerCodeActionsProvider(
       ['markdown', 'plaintext'],
       new HanspellCodeAction(),
-      { providedCodeActionKinds: HanspellCodeAction.providedCodeActionKinds }
-    )
+      { providedCodeActionKinds: HanspellCodeAction.providedCodeActionKinds },
+    ),
   );
-
 
   // Binds code action commands to corresponding functions.
   context.subscriptions.push(
-    vscode.commands.registerCommand('vscode-hanspell.fixTypo', fixTypo)
+    vscode.commands.registerCommand('vscode-hanspell.fixTypo', fixTypo),
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand('vscode-hanspell.fixAllTypos', fixAllTypos)
+    vscode.commands.registerCommand('vscode-hanspell.fixAllTypos', fixAllTypos),
   );
 
   // Binds commands to corresponding functions.
   context.subscriptions.push(
     vscode.commands.registerCommand(
       'vscode-hanspell.spellCheckByDAUM',
-      spellCheckByDAUM
-    )
+      spellCheckByDAUM,
+    ),
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
       'vscode-hanspell.spellCheckByPNU',
-      spellCheckByPNU
-    )
+      spellCheckByPNU,
+    ),
   );
 }
 
@@ -76,7 +75,7 @@ function fixAllTypos(args: { document: vscode.TextDocument }) {
   let edit = new vscode.WorkspaceEdit();
   let uri = args.document.uri;
 
-  getHanspellDiagnostics(args.document).forEach((diagnostic) => {
+  getHanspellDiagnostics(args.document).forEach(diagnostic => {
     edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);
   });
   vscode.workspace.applyEdit(edit);
