@@ -61,7 +61,7 @@ function fixTypo(args: {
   range: vscode.Range | vscode.Selection;
   suggestion: string;
 }) {
-  let edit = new vscode.WorkspaceEdit();
+  const edit = new vscode.WorkspaceEdit();
   edit.replace(args.document.uri, args.range, args.suggestion);
   vscode.workspace.applyEdit(edit);
 }
@@ -72,8 +72,8 @@ function fixTypo(args: {
  * Called by 'vscode-hanspell.fixAllTypos' code action command.
  */
 function fixAllTypos(args: { document: vscode.TextDocument }) {
-  let edit = new vscode.WorkspaceEdit();
-  let uri = args.document.uri;
+  const edit = new vscode.WorkspaceEdit();
+  const uri = args.document.uri;
 
   getHanspellDiagnostics(args.document).forEach((diagnostic) => {
     edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);

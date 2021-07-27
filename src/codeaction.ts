@@ -38,7 +38,7 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
       );
     });
 
-    let action = new vscode.CodeAction(
+    const action = new vscode.CodeAction(
       '맞춤법 오류 모두 교정',
       vscode.CodeActionKind.QuickFix,
     );
@@ -59,7 +59,7 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
     diagnostic: HanspellDiagnostic,
     document: vscode.TextDocument,
   ): vscode.CodeAction[] {
-    let actions: vscode.CodeAction[] = [];
+    const actions: vscode.CodeAction[] = [];
 
     diagnostic.typo.suggestions.forEach((suggestion: string) => {
       const action = new vscode.CodeAction(

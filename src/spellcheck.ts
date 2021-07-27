@@ -150,7 +150,7 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
   if (typos.length === 0) {
     return typos;
   }
-  let sorted = typos.sort((a: HanspellTypo, b: HanspellTypo): number => {
+  const sorted = typos.sort((a: HanspellTypo, b: HanspellTypo): number => {
     if (a.token < b.token) {
       return -1;
     } else if (a.token > b.token) {
@@ -160,7 +160,7 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
     }
   });
 
-  let left = [sorted[0]];
+  const left = [sorted[0]];
 
   for (let i = 1; i < typos.length; i++) {
     if (sorted[i - 1].token !== sorted[i].token) {
