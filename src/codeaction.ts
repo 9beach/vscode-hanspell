@@ -18,9 +18,9 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
 
   provideCodeActions(
     document: vscode.TextDocument,
-    range: vscode.Range | vscode.Selection,
+    _range: vscode.Range | vscode.Selection,
     context: vscode.CodeActionContext,
-    token: vscode.CancellationToken,
+    _token: vscode.CancellationToken,
   ): vscode.CodeAction[] {
     let actions: vscode.CodeAction[] = [];
 
