@@ -75,7 +75,7 @@ function fixAllTypos(args: { document: vscode.TextDocument }) {
   let edit = new vscode.WorkspaceEdit();
   let uri = args.document.uri;
 
-  getHanspellDiagnostics(args.document).forEach(diagnostic => {
+  getHanspellDiagnostics(args.document).forEach((diagnostic) => {
     edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);
   });
   vscode.workspace.applyEdit(edit);

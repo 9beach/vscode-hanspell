@@ -94,7 +94,7 @@ export function subscribeHanspellDiagnosticsToDocumentChanges(
   }
 
   context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(editor => {
+    vscode.window.onDidChangeActiveTextEditor((editor) => {
       if (editor) {
         refreshDiagnostics(editor.document);
       }
@@ -102,13 +102,13 @@ export function subscribeHanspellDiagnosticsToDocumentChanges(
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument(e =>
+    vscode.workspace.onDidChangeTextDocument((e) =>
       refreshDiagnostics(e.document),
     ),
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidCloseTextDocument(doc =>
+    vscode.workspace.onDidCloseTextDocument((doc) =>
       hanspellDiagnostics.delete(doc.uri),
     ),
   );

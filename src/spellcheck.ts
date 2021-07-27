@@ -44,7 +44,7 @@ export function spellCheckByPNU(): void {
       cancellable: true,
     },
     () =>
-      spellCheck(SpellCheckService.pnu).catch(err => {
+      spellCheck(SpellCheckService.pnu).catch((err) => {
         vscode.window.showInformationMessage(err);
       }),
   );
@@ -63,7 +63,7 @@ export function spellCheckByDAUM(): void {
       cancellable: true,
     },
     () =>
-      spellCheck(SpellCheckService.daum).catch(err => {
+      spellCheck(SpellCheckService.daum).catch((err) => {
         vscode.window.showInformationMessage(err);
       }),
   );
@@ -112,7 +112,7 @@ function spellCheck(server: SpellCheckService): Promise<string> {
       docs2typos.set(
         doc,
         !ignores.empty
-          ? uniq(typos).filter(typo => !ignores.match(typo.token))
+          ? uniq(typos).filter((typo) => !ignores.match(typo.token))
           : uniq(typos),
       );
 
