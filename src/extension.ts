@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
   // `vscode-hanspell.fixAllTypos`.
   context.subscriptions.push(
     vscode.languages.registerCodeActionsProvider(
-      ['markdown', 'plaintext'],
+      '*',
       new HanspellCodeAction(),
       { providedCodeActionKinds: HanspellCodeAction.providedCodeActionKinds },
     ),
