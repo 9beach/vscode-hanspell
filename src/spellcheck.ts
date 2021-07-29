@@ -29,6 +29,7 @@ export const getTyposOfDocument = (doc: vscode.TextDocument): HanspellTypo[] =>
 enum SpellCheckService {
   pnu = 0,
   daum,
+  all,
 }
 
 /**
@@ -69,12 +70,33 @@ export function spellCheckByDAUM(): void {
   );
 }
 
+/**
+ *  Spell checks the active document by PNU and DAUM service, and sets
+ *  docs2typos map.
+ *
+ *  Called by 'vscode-hanspell.spellCheckByAll' command.
+ */
+export function spellCheckByAll(): void {
+  vscode.window.withProgress(
+    {
+      location: vscode.ProgressLocation.Notification,
+      title: '맞춤법 검사(다음, 부산대) 중입니다.',
+      cancellable: true,
+    },
+    () =>
+      spellCheck(SpellCheckService.all).catch((err) => {
+        vscode.window.showInformationMessage(err);
+      }),
+  );
+}
+
 /** Reads glob patterns in `.hanspell-ignore` to avoid from spell check. */
 function getHanspellIgnore(): string {
   try {
     // '이딸리아*\n톨스또이\n,' => '{이딸리아*,톨스또이*,}'.
     const homedir = process.env.HOME || process.env.USERPROFILE;
     let ignores = fs.readFileSync(`${homedir}/.hanspell-ignore`, 'utf8');
+
     ignores = ignores.replace(/[,{}]/g, '');
     ignores = `{${ignores.replace(/[\n ][\n ]*/g, ',')}}`;
     if (ignores.length < 4) {
@@ -89,6 +111,7 @@ function getHanspellIgnore(): string {
 /** Spell checks the active document, and sets docs2typos map. */
 function spellCheck(server: SpellCheckService): Promise<string> {
   const editor = vscode.window.activeTextEditor;
+
   if (!editor) {
     return new Promise((resolve, reject) => {
       return reject('먼저 검사할 문서를 선택하세요.');
@@ -100,13 +123,14 @@ function spellCheck(server: SpellCheckService): Promise<string> {
     editor.selection.isEmpty ? undefined : editor.selection,
   );
 
-  let typos: HanspellTypo[] = [];
-
-  function spellCheckGot(response: HanspellTypo[]): void {
-    typos = typos.concat(response);
-  }
-
   return new Promise((resolve, reject) => {
+    let typos: HanspellTypo[] = [];
+    let pnuFailed = false;
+
+    function spellCheckDid(response: HanspellTypo[]): void {
+      typos = typos.concat(response);
+    }
+
     function spellCheckFinished(): void {
       const ignores = new Minimatch(getHanspellIgnore());
       docs2typos.set(
@@ -117,28 +141,55 @@ function spellCheck(server: SpellCheckService): Promise<string> {
       );
 
       refreshDiagnostics(doc);
-      resolve('맞춤법 검사를 마쳤습니다.');
+
+      if (pnuFailed) {
+        reject('부산대 서비스 접속 오류로 일부 문장은 교정하지 못했습니다.');
+      } else {
+        resolve('맞춤법 검사를 마쳤습니다.');
+      }
     }
+
+    const HTTP_TIMEOUT = 10000;
 
     switch (server) {
       case SpellCheckService.pnu:
         hanspell.spellCheckByPNU(
           text,
-          10000,
-          spellCheckGot,
+          HTTP_TIMEOUT,
+          spellCheckDid,
           spellCheckFinished,
           (): void =>
             reject('부산대 서비스 접속 오류로 맞춤법 교정에 실패했습니다.'),
         );
         break;
-      default:
+      case SpellCheckService.daum:
         hanspell.spellCheckByDAUM(
           text,
-          10000,
-          spellCheckGot,
+          HTTP_TIMEOUT,
+          spellCheckDid,
           spellCheckFinished,
           (): void =>
             reject('다음 서비스 접속 오류로 맞춤법 교정에 실패했습니다.'),
+        );
+        break;
+      default:
+        hanspell.spellCheckByPNU(
+          text,
+          HTTP_TIMEOUT,
+          spellCheckDid,
+          (): void => {
+            hanspell.spellCheckByDAUM(
+              text,
+              HTTP_TIMEOUT,
+              spellCheckDid,
+              spellCheckFinished,
+              (): void =>
+                reject('다음 서비스 접속 오류로 맞춤법 교정에 실패했습니다.'),
+            );
+          },
+          (): void => {
+            pnuFailed = true;
+          },
         );
         break;
     }

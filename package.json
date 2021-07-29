@@ -2,7 +2,7 @@
   "name": "vscode-hanspell",
   "displayName": "vscode-hanspell",
   "description": "(주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스를 이용한 한글 맞춤법 검사기.",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "icon": "images/hanspell.png",
   "publisher": "9beach",
   "engines": {
@@ -13,6 +13,7 @@
     "Other"
   ],
   "activationEvents": [
+    "onCommand:vscode-hanspell.spellCheckByAll",
     "onCommand:vscode-hanspell.spellCheckByDAUM",
     "onCommand:vscode-hanspell.spellCheckByPNU"
   ],
@@ -25,6 +26,10 @@
       {
         "command": "vscode-hanspell.spellCheckByPNU",
         "title": "맞춤법 검사 (부산대)"
+      },
+      {
+        "command": "vscode-hanspell.spellCheckByAll",
+        "title": "맞춤법 검사 (다음, 부산대)"
       }
     ]
   },

@@ -6,7 +6,11 @@
 import * as vscode from 'vscode';
 
 import { HanspellCodeAction } from './codeaction';
-import { spellCheckByDAUM, spellCheckByPNU } from './spellcheck';
+import {
+  spellCheckByDAUM,
+  spellCheckByPNU,
+  spellCheckByAll
+} from './spellcheck';
 import {
   subscribeHanspellDiagnosticsToDocumentChanges,
   getHanspellDiagnostics,
@@ -47,6 +51,13 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       'vscode-hanspell.spellCheckByPNU',
       spellCheckByPNU,
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'vscode-hanspell.spellCheckByAll',
+      spellCheckByAll,
     ),
   );
 }
