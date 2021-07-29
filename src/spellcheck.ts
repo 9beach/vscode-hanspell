@@ -18,7 +18,7 @@ export type HanspellTypo = {
   token: string;
   suggestions: string[];
   info: string;
-  type?: string;
+  type: string;
 };
 
 /** Gets typos of the document. */
@@ -133,7 +133,7 @@ function spellCheck(server: SpellCheckService): Promise<string> {
     let typos: HanspellTypo[] = [];
     let pnuFailed = false;
 
-    function spellCheckDid(response: any[]): void {
+    function spellCheckDid(response: HanspellTypo[]): void {
       typos = typos.concat(response);
     }
 
@@ -220,12 +220,25 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
   const left = [sorted[0]];
 
   for (let i = 1; i < typos.length; i++) {
+    const tokenA = sorted[i - 1].token;
+    const tokenB = sorted[i].token;
+
     if (
-      sorted[i - 1].token !== sorted[i].token &&
-      sorted[i].token.indexOf(sorted[i - 1].token) == -1
+      tokenA !== tokenB &&
+      (tokenB.indexOf(tokenA) != 0 || isLetter(tokenB[tokenA.length]))
     ) {
       left.push(sorted[i]);
     }
   }
   return left;
+}
+
+function isLetter(char: string): boolean {
+  return (
+    (char >= 'ㄱ' && char <= 'ㅎ') ||
+    (char >= 'ㅏ' && char <= 'ㅣ') ||
+    (char >= '가' && char <= '힣') ||
+    (char >= 'a' && char <= 'z') ||
+    (char >= 'A' && char <= 'Z')
+  );
 }
