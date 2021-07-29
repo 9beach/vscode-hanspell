@@ -18,7 +18,7 @@ export type HanspellTypo = {
   token: string;
   suggestions: string[];
   info: string;
-  type: string;
+  type?: string;
 };
 
 /** Gets typos of the document. */
@@ -119,15 +119,21 @@ function spellCheck(server: SpellCheckService): Promise<string> {
   }
 
   const doc = editor.document;
-  const text = doc.getText(
-    editor.selection.isEmpty ? undefined : editor.selection,
-  );
+  // Due to PNU server's weird behavior.
+  const text = doc
+    .getText(editor.selection.isEmpty ? undefined : editor.selection)
+    .replace(/  *$/g, '')
+    .replace(/^  */g, '')
+    .replace(/  *\n/g, '\n')
+    .replace(/\n  */g, '\n')
+    .replace(/\n\n*/g, '\n')
+    .replace(/\n\n*$/g, '');
 
   return new Promise((resolve, reject) => {
     let typos: HanspellTypo[] = [];
     let pnuFailed = false;
 
-    function spellCheckDid(response: HanspellTypo[]): void {
+    function spellCheckDid(response: any[]): void {
       typos = typos.concat(response);
     }
 
@@ -214,7 +220,10 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
   const left = [sorted[0]];
 
   for (let i = 1; i < typos.length; i++) {
-    if (sorted[i - 1].token !== sorted[i].token) {
+    if (
+      sorted[i - 1].token !== sorted[i].token &&
+      sorted[i].token.indexOf(sorted[i - 1].token) == -1
+    ) {
       left.push(sorted[i]);
     }
   }
