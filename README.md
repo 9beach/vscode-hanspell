@@ -1,6 +1,6 @@
 # 비주얼 스튜디오 코드 한스펠
 
-[비주얼 스튜디오 코드 한스펠](https://github.com/9beach/vscode-hanspell)(vscode-hanspell)은, (주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스를 이용해서 한글 맞춤법 검사 기능을 제공하는 [비주얼 스튜디오 코드](https://code.visualstudio.com)용 [익스텐션](https://code.visualstudio.com/docs/editor/extension-marketplace)입니다.
+[비주얼 스튜디오 코드 한스펠](https://github.com/9beach/vscode-hanspell)(vscode-hanspell)은, (주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스를 이용해서 한글 맞춤법을 검사하는 [비주얼 스튜디오 코드](https://code.visualstudio.com)용 [익스텐션](https://code.visualstudio.com/docs/editor/extension-marketplace)입니다.
 
 터미널과 커맨드 라인 팬이라면 [hanspell](https://github.com/9beach/hanspell)을 추천합니다.
 
@@ -12,7 +12,7 @@
 
 ### 맞춤법 검사
 
-아래의 그림과 같이 명령 팔레트(`⇧⌘P` 또는 `F1`)에서 맞춤법 검사를 실행합니다. `맞춤법 검사 (다음)`은 (주)다음 맞춤법 서비스를, `맞춤법 검사 (부산대)`는 부산대 맞춤법 서비스를, `맞춤법 검사 (다음, 부산대)`는 두 가지 서비스를 모두 이용합니다.
+아래의 그림과 같이 명령 팔레트(`⇧⌘P` 또는 `F1`)에서 맞춤법 검사를 실행합니다. `맞춤법 검사 (다음)`, `맞춤법 검사 (부산대)`, `맞춤법 검사 (다음, 부산대)`, 모두 세 개의 커맨드를 제공하는데, `맞춤법 검사 (다음, 부산대)`는 두 서비스를 한 번에 실행한 뒤 결과를 모아서 보여줍니다.
 
 ![commands](https://github.com/9beach/vscode-hanspell/raw/HEAD/images/hanspell-commands.png)
 
