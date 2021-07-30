@@ -219,7 +219,7 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
   });
 
   const typosLen = sorted.length;
-  const isDifferent = Array(typosLen).fill(true);
+  const isUniq = Array(typosLen).fill(true);
 
   for (let i = 0; i < typosLen; i++) {
     const shortToken = sorted[i].token;
@@ -241,19 +241,19 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
       // If '안녕 하세요' and '안녕 하세요.' exist, then removes '안녕 하세요.'. But
       // '채마', '채마밭', '채마.밭' do not matter.
       if (
-        isDifferent[j] &&
+        isUniq[j] &&
         longToken.indexOf(shortToken) !== -1 &&
         !left.exec(longToken) &&
         !right.exec(longToken)
       ) {
-        isDifferent[j] = false;
+        isUniq[j] = false;
       }
     }
   }
 
   const reduced = [];
   for (let i = 0; i < typosLen; i++) {
-    if (isDifferent[i]) {
+    if (isUniq[i]) {
       reduced.push(sorted[i]);
     }
   }
