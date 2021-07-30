@@ -122,12 +122,10 @@ function spellCheck(server: SpellCheckService): Promise<string> {
   // Due to PNU server's weird behavior.
   const text = doc
     .getText(editor.selection.isEmpty ? undefined : editor.selection)
-    .replace(/  *$/g, '')
-    .replace(/^  */g, '')
-    .replace(/  *\n/g, '\n')
-    .replace(/\n  */g, '\n')
+    .replace(/^ */, '')
+    .replace(/ *\n\n* */g, '\n')
     .replace(/\n\n*/g, '\n')
-    .replace(/\n\n*$/g, '');
+    .replace(/\n$/g, '');
 
   return new Promise((resolve, reject) => {
     let typos: HanspellTypo[] = [];
@@ -202,43 +200,56 @@ function spellCheck(server: SpellCheckService): Promise<string> {
   });
 }
 
-/** Removes the duplicated tokens from the typos array. */
+/** Removes the duplicated or overlapping tokens from the typos array. */
 function uniq(typos: HanspellTypo[]): HanspellTypo[] {
   if (typos.length === 0) {
     return typos;
   }
-  const sorted = typos.sort((a: HanspellTypo, b: HanspellTypo): number => {
-    if (a.token < b.token) {
+
+  // Sorts array by length.
+  const sortedByLen = typos.sort((a: HanspellTypo, b: HanspellTypo): number => {
+    if (a.token.length < b.token.length) {
       return -1;
-    } else if (a.token > b.token) {
+    } else if (a.token.length > b.token.length) {
       return 1;
     } else {
       return 0;
     }
   });
 
-  const left = [sorted[0]];
+  const len = sortedByLen.length;
+  const keys = Array(len).fill(true);
 
-  for (let i = 1; i < typos.length; i++) {
-    const tokenA = sorted[i - 1].token;
-    const tokenB = sorted[i].token;
+  for (let i = 0; i < len; i++) {
+    const escaped = sortedByLen[i].token.replace(
+      /[-/\\^$*+?.()|[\]{}]/g,
+      '\\$&',
+    );
+    // Checks word boundary.
+    const boundary = new RegExp(
+      `(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣]))${escaped}((?=[^ㄱ-ㅎㅏ-ㅣ가-힣])|$)`,
+      'g',
+    );
+    // Checks left-side characters.
+    const left = new RegExp(`[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣].*${escaped}`, 'g');
+    // Checks right-side characters.
+    const right = new RegExp(`${escaped}.*[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]`, 'g');
 
-    if (
-      tokenA !== tokenB &&
-      (tokenB.indexOf(tokenA) != 0 || isLetter(tokenB[tokenA.length]))
-    ) {
-      left.push(sorted[i]);
+    for (let j = i + 1; j < len; j++) {
+      const token = sortedByLen[j].token;
+      // Removes same or nearly same tokens.
+      if (boundary.exec(token) && !left.exec(token) && !right.exec(token)) {
+        keys[j] = false;
+      }
     }
   }
-  return left;
-}
 
-function isLetter(char: string): boolean {
-  return (
-    (char >= 'ㄱ' && char <= 'ㅎ') ||
-    (char >= 'ㅏ' && char <= 'ㅣ') ||
-    (char >= '가' && char <= '힣') ||
-    (char >= 'a' && char <= 'z') ||
-    (char >= 'A' && char <= 'Z')
-  );
+  const left: HanspellTypo[] = [];
+  for (let i = 0; i < len; i++) {
+    if (keys[i]) {
+      left.push(sortedByLen[i]);
+    }
+  }
+
+  return left;
 }

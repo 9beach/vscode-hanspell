@@ -9,7 +9,7 @@ import { HanspellCodeAction } from './codeaction';
 import {
   spellCheckByDAUM,
   spellCheckByPNU,
-  spellCheckByAll
+  spellCheckByAll,
 } from './spellcheck';
 import {
   subscribeHanspellDiagnosticsToDocumentChanges,

@@ -23,16 +23,6 @@ export function getHanspellDiagnostics(
   return hanspellDiagnostics.get(doc.uri) as HanspellDiagnostic[];
 }
 
-function isLetter(char: string): boolean {
-  return (
-    (char >= 'ㄱ' && char <= 'ㅎ') ||
-    (char >= 'ㅏ' && char <= 'ㅣ') ||
-    (char >= '가' && char <= '힣') ||
-    (char >= 'a' && char <= 'z') ||
-    (char >= 'A' && char <= 'Z')
-  );
-}
-
 /**
  * Makes the diagnostics out of typos of document.
  *
@@ -48,32 +38,22 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
   const diagnostics: vscode.Diagnostic[] = [];
 
   typos.forEach((typo: HanspellTypo) => {
-    const token = typo.token;
-    const tokenLen = token.length;
-    const tokenBeginsWithLetter = isLetter(token[0]);
-    const tokenEndsWithLetter = isLetter(token[token.length - 1]);
+    // Escapes regular expression special characters.
+    const pattern = new RegExp(
+      `(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣]))${typo.token.replace(
+        /[-/\\^$*+?.()|[\]{}]/g,
+        '\\$&',
+      )}((?=[^ㄱ-ㅎㅏ-ㅣ가-힣])|$)`,
+      'g',
+    );
+    const tokenLen = typo.token.length;
 
     for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
       const line = doc.lineAt(lineIndex).text;
-      const lineLen = line.length;
-
-      let start = 0;
-      let found = -1;
-      while (((found = line.indexOf(token, start)), found !== -1)) {
-        // Checks word boundary.
-        if (
-          // Left boundary.
-          (!tokenBeginsWithLetter ||
-            found == 0 ||
-            !isLetter(line[found-1])) &&
-          // Right boundary.
-          (!tokenEndsWithLetter ||
-            found + tokenLen == lineLen ||
-            !isLetter(line[found+tokenLen]))
-        ) {
-          diagnostics.push(new HanspellDiagnostic(lineIndex, found, typo));
-        }
-        start = found + 1;
+      while (pattern.exec(line)) {
+        diagnostics.push(
+          new HanspellDiagnostic(lineIndex, pattern.lastIndex - tokenLen, typo),
+        );
       }
     }
   });
