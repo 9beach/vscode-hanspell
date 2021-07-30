@@ -38,7 +38,7 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
   const diagnostics: vscode.Diagnostic[] = [];
 
   typos.forEach((typo: HanspellTypo) => {
-    // Escapes regular expression special characters.
+    // Escapes regular expression special characters, and matches word boundary.
     const pattern = new RegExp(
       `(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣]))${typo.token.replace(
         /[-/\\^$*+?.()|[\]{}]/g,

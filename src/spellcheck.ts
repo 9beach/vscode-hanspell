@@ -119,6 +119,7 @@ function spellCheck(server: SpellCheckService): Promise<string> {
   }
 
   const doc = editor.document;
+
   // Due to PNU server's weird behavior.
   const text = doc
     .getText(editor.selection.isEmpty ? undefined : editor.selection)
@@ -207,7 +208,7 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
   }
 
   // Sorts array by length.
-  const sortedByLen = typos.sort((a: HanspellTypo, b: HanspellTypo): number => {
+  const sorted = typos.sort((a: HanspellTypo, b: HanspellTypo): number => {
     if (a.token.length < b.token.length) {
       return -1;
     } else if (a.token.length > b.token.length) {
@@ -217,39 +218,45 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
     }
   });
 
-  const len = sortedByLen.length;
-  const keys = Array(len).fill(true);
+  const typosLen = sorted.length;
+  const isDifferent = Array(typosLen).fill(true);
 
-  for (let i = 0; i < len; i++) {
-    const escaped = sortedByLen[i].token.replace(
-      /[-/\\^$*+?.()|[\]{}]/g,
-      '\\$&',
-    );
-    // Checks word boundary.
-    const boundary = new RegExp(
-      `(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣]))${escaped}((?=[^ㄱ-ㅎㅏ-ㅣ가-힣])|$)`,
-      'g',
-    );
+  for (let i = 0; i < typosLen; i++) {
+    const shortToken = sorted[i].token;
+
+    // Escapes regular expression special characters.
+    const escaped = shortToken.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+
     // Checks left-side characters.
     const left = new RegExp(`[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣].*${escaped}`, 'g');
+
     // Checks right-side characters.
     const right = new RegExp(`${escaped}.*[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]`, 'g');
 
-    for (let j = i + 1; j < len; j++) {
-      const token = sortedByLen[j].token;
+    for (let j = i + 1; j < typosLen; j++) {
+      const longToken = sorted[j].token;
+
       // Removes same or nearly same tokens.
-      if (boundary.exec(token) && !left.exec(token) && !right.exec(token)) {
-        keys[j] = false;
+      //
+      // If '안녕 하세요' and '안녕 하세요.' exist, then removes '안녕 하세요.'. But
+      // '채마', '채마밭', '채마.밭' do not matter.
+      if (
+        isDifferent[j] &&
+        longToken.indexOf(shortToken) !== -1 &&
+        !left.exec(longToken) &&
+        !right.exec(longToken)
+      ) {
+        isDifferent[j] = false;
       }
     }
   }
 
-  const left: HanspellTypo[] = [];
-  for (let i = 0; i < len; i++) {
-    if (keys[i]) {
-      left.push(sortedByLen[i]);
+  const reduced = [];
+  for (let i = 0; i < typosLen; i++) {
+    if (isDifferent[i]) {
+      reduced.push(sorted[i]);
     }
   }
 
-  return left;
+  return reduced;
 }
