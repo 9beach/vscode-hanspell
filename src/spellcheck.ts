@@ -121,12 +121,9 @@ function spellCheck(server: SpellCheckService): Promise<string> {
   const doc = editor.document;
 
   // Due to PNU server's weird behavior.
-  const text = doc
-    .getText(editor.selection.isEmpty ? undefined : editor.selection)
-    .replace(/^ */, '')
-    .replace(/ *\n\n* */g, '\n')
-    .replace(/\n\n*/g, '\n')
-    .replace(/\n$/g, '');
+  const text = doc.getText(
+    editor.selection.isEmpty ? undefined : editor.selection,
+  );
 
   return new Promise((resolve, reject) => {
     let typos: HanspellTypo[] = [];
