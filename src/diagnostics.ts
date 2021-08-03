@@ -73,7 +73,13 @@ export class HanspellDiagnostic extends vscode.Diagnostic {
       column + typo.token.length,
     );
 
-    super(range, getTypoInfo(typo), vscode.DiagnosticSeverity.Warning);
+    super(
+      range,
+      getTypoInfo(typo),
+      typo.duplicated === undefined || typo.duplicated === true
+        ? vscode.DiagnosticSeverity.Warning
+        : vscode.DiagnosticSeverity.Information,
+    );
 
     this.typo = typo;
     this.code = HANSPELL_MENTION;

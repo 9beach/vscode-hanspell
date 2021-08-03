@@ -18,7 +18,8 @@ export type HanspellTypo = {
   token: string;
   suggestions: string[];
   info: string;
-  type: string;
+  type?: string;
+  duplicated?: boolean; // Checks if it appears both in PNU and DAUM.
 };
 
 /** Gets typos of the document. */
@@ -135,11 +136,13 @@ function spellCheck(server: SpellCheckService): Promise<string> {
 
     function spellCheckFinished(): void {
       const ignores = new Minimatch(getHanspellIgnore());
+      const reduced = SpellCheckService.all === server ? uniq(typos) : typos;
+
       docs2typos.set(
         doc,
         !ignores.empty
-          ? uniq(typos).filter((typo) => !ignores.match(typo.token))
-          : uniq(typos),
+          ? reduced.filter((typo) => !ignores.match(typo.token))
+          : reduced,
       );
 
       refreshDiagnostics(doc);
@@ -230,6 +233,8 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
     // Checks right-side characters.
     const right = new RegExp(`${escaped}.*[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]`, 'g');
 
+    sorted[i].duplicated = false;
+
     for (let j = i + 1; j < typosLen; j++) {
       const longToken = sorted[j].token;
 
@@ -244,6 +249,8 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
         !right.exec(longToken)
       ) {
         isUniq[j] = false;
+        sorted[i].duplicated = true;
+        break; // At most, once for a token.
       }
     }
   }
