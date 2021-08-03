@@ -21,8 +21,8 @@ export function activate(context: vscode.ExtensionContext) {
   // Subscribes `refreshDiagnostics` to documents change events.
   subscribeHanspellDiagnosticsToDocumentChanges(context);
 
-  // Registers the code actions for `vscode-hanspell.fixTypo` and
-  // `vscode-hanspell.fixAllTypos`.
+  // Registers the code actions for `vscode-hanspell.fixTypo`,
+  // `vscode-hanspell.fixAllTypos`, and `vscode-hanspell.fixCommonTypos`.
   context.subscriptions.push(
     vscode.languages.registerCodeActionsProvider(
       '*',
@@ -37,6 +37,12 @@ export function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(
     vscode.commands.registerCommand('vscode-hanspell.fixAllTypos', fixAllTypos),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'vscode-hanspell.fixCommonTypos',
+      fixCommonTypos,
+    ),
   );
 
   // Binds commands to corresponding functions.
@@ -87,6 +93,25 @@ function fixAllTypos(args: { document: vscode.TextDocument }) {
   const uri = args.document.uri;
 
   getHanspellDiagnostics(args.document).forEach((diagnostic) => {
+    edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);
+  });
+  vscode.workspace.applyEdit(edit);
+}
+
+/**
+ * Fixes all the typos of the document common in PNU and DAUM services.
+ *
+ * Called by 'vscode-hanspell.fixCommonTypos' code action command.
+ */
+function fixCommonTypos(args: { document: vscode.TextDocument }) {
+  const edit = new vscode.WorkspaceEdit();
+  const uri = args.document.uri;
+
+  getHanspellDiagnostics(args.document).forEach((diagnostic) => {
+    if (!diagnostic.typo.duplicated) {
+      return;
+    }
+
     edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);
   });
   vscode.workspace.applyEdit(edit);

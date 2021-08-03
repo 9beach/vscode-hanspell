@@ -25,7 +25,7 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
     let actions: vscode.CodeAction[] = [];
 
     const hanspellDiagnostics = context.diagnostics.filter(
-      (d) => d.code === HANSPELL_MENTION,
+      (diagnostic) => diagnostic.code === HANSPELL_MENTION,
     ) as HanspellDiagnostic[];
 
     if (!hanspellDiagnostics.length) {
@@ -38,6 +38,25 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
       );
     });
 
+    const duplicated = hanspellDiagnostics.some(
+      (diagnostic) => diagnostic.typo.duplicated === true,
+    );
+
+    if (duplicated) {
+      const action = new vscode.CodeAction(
+        '다음, 부산대 공통 오류만 모두 교정',
+        vscode.CodeActionKind.QuickFix,
+      );
+
+      action.command = {
+        command: 'vscode-hanspell.fixCommonTypos',
+        title: 'Fix common typos',
+        arguments: [{ document }],
+      };
+
+      actions.push(action);
+    }
+
     const action = new vscode.CodeAction(
       '맞춤법 오류 모두 교정',
       vscode.CodeActionKind.QuickFix,
@@ -48,7 +67,6 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
       title: 'Fix all typos',
       arguments: [{ document }],
     };
-    action.diagnostics = [...context.diagnostics];
 
     actions.push(action);
 
@@ -71,7 +89,6 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
         title: 'Fix a typo',
         arguments: [{ document, suggestion, range: diagnostic.range }],
       };
-      action.diagnostics = [diagnostic];
 
       actions.push(action);
     });
