@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { Minimatch } from 'minimatch';
+import { Minimatch, IMinimatch } from 'minimatch';
 
 const hanspell = require('hanspell');
 
@@ -91,21 +91,41 @@ export function spellCheckByAll(): void {
   );
 }
 
-/** Reads glob patterns in `.hanspell-ignore` to avoid from spell check. */
-function getHanspellIgnore(): string {
-  try {
-    // '이딸리아*\n톨스또이\n,' => '{이딸리아*,톨스또이*,}'.
-    const homedir = process.env.HOME || process.env.USERPROFILE;
-    let ignores = fs.readFileSync(`${homedir}/.hanspell-ignore`, 'utf8');
+let ignoreLastModified = -1;
+let match = new Minimatch('');
 
-    ignores = ignores.replace(/[,{}]/g, '');
-    ignores = `{${ignores.replace(/[\n ][\n ]*/g, ',')}}`;
-    if (ignores.length < 4) {
-      ignores = '';
+/** Reads glob patterns in `.hanspell-ignore` to avoid from spell check. */
+function getHanspellIgnore(): IMinimatch {
+  try {
+    const path = `${
+      process.env.HOME || process.env.USERPROFILE
+    }/.hanspell-ignore`;
+    const stat = fs.statSync(path);
+
+    if (stat === undefined) {
+      return match;
     }
-    return ignores;
+
+    if (ignoreLastModified === stat.mtimeMs) {
+      return match;
+    }
+    ignoreLastModified = stat.mtimeMs;
+
+    // '이딸리아*\n톨스또이\n,' => '{이딸리아*,톨스또이*,}'.
+    const ignores = `{${fs
+      .readFileSync(path, 'utf8')
+      .replace(/[,{}]/g, '\\$&')
+      .replace(/\n\n*/g, ',')}}`;
+
+    if (ignores.length >= 4) {
+      match = new Minimatch(ignores);
+    } else {
+      match = new Minimatch('');
+    }
+
+    return match;
   } catch (err) {
-    return '';
+    return match;
   }
 }
 
@@ -135,7 +155,7 @@ function spellCheck(server: SpellCheckService): Promise<string> {
     }
 
     function spellCheckFinished(): void {
-      const ignores = new Minimatch(getHanspellIgnore());
+      const ignores = getHanspellIgnore();
       const reduced = SpellCheckService.all === server ? uniq(typos) : typos;
 
       docs2typos.set(
