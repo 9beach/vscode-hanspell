@@ -238,8 +238,9 @@ function spellCheck(service: SpellCheckService): Promise<string> {
   });
 }
 
-/** Only DAUM service sets type. */
-function isFromDifferentService(a: HanspellTypo, b: HanspellTypo) {
+/** Checks if two typos are from different services. */
+function areFromDifferentServices(a: HanspellTypo, b: HanspellTypo) {
+  // Only DAUM service sets type.
   return (
     (a.type !== undefined && b.type === undefined) ||
     (a.type === undefined && b.type !== undefined)
@@ -291,7 +292,7 @@ function uniq(
         isUniq[j] = false;
         if (
           service === SpellCheckService.all &&
-          isFromDifferentService(shortTypo, sorted[j])
+          areFromDifferentServices(shortTypo, sorted[j])
         ) {
           shortTypo.common = true;
         }
