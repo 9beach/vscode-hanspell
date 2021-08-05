@@ -1,15 +1,15 @@
 /**
- * Defines HanspellCodeAction.
+ * Defines `HanspellCodeAction` class.
  *
- * HanspellTypo makes HanspellDiagnostic makes HanspellCodeAction.
+ * `HanspellTypo` makes `HanspellDiagnostic` makes `HanspellCodeAction`.
  */
 
 import * as vscode from 'vscode';
 import { HANSPELL_MENTION, HanspellDiagnostic } from './diagnostics';
 
 /**
- * Provides code actions for the commands of vscode-hanspell.fixTypo and
- * vscode-hanspell.fixAllTypos.
+ * Provides code actions for the commands of `vscode-hanspell.fixTypo` and
+ * `vscode-hanspell.fixAllTypos`.
  */
 export class HanspellCodeAction implements vscode.CodeActionProvider {
   public static readonly providedCodeActionKinds = [

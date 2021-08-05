@@ -1,6 +1,6 @@
 /**
- * Defines the functions for the code action commands, and registers spellCheck
- * commands, `refreshDiagnostics`, and them.
+ * Defines the functions for the code action commands, and registers them,
+ * spellCheck-related commands, and `refreshDiagnostics`.
  */
 
 import * as vscode from 'vscode';
@@ -71,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
 /**
  * Fixes the typo of the given range of the document.
  *
- * Called by 'vscode-hanspell.fixTypo' code action command.
+ * Called by `vscode-hanspell.fixTypo` code action command.
  */
 function fixTypo(args: {
   document: vscode.TextDocument;
@@ -86,7 +86,7 @@ function fixTypo(args: {
 /**
  * Fixes all the typos of the document.
  *
- * Called by 'vscode-hanspell.fixAllTypos' code action command.
+ * Called by `vscode-hanspell.fixAllTypos` code action command.
  */
 function fixAllTypos(args: { document: vscode.TextDocument }) {
   const edit = new vscode.WorkspaceEdit();
@@ -101,7 +101,7 @@ function fixAllTypos(args: { document: vscode.TextDocument }) {
 /**
  * Fixes all the typos of the document common in PNU and DAUM services.
  *
- * Called by 'vscode-hanspell.fixCommonTypos' code action command.
+ * Called by `vscode-hanspell.fixCommonTypos` code action command.
  */
 function fixCommonTypos(args: { document: vscode.TextDocument }) {
   const edit = new vscode.WorkspaceEdit();

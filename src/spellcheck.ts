@@ -14,12 +14,13 @@ import { refreshDiagnostics } from './diagnostics';
 /** Dictionary of `vscode.TextDocument` to `HanspellTypo[]`. */
 const docs2typos = new WeakMap();
 
+/** Carries the information of a typo. */
 export type HanspellTypo = {
-  token: string;
-  suggestions: string[];
-  info: string;
-  type?: string;
-  common?: boolean; // Checks if it appears both in PNU and DAUM.
+  token: string; // Typo token.
+  suggestions: string[]; // Fix suggestions.
+  info: string; // Typo info.
+  type?: string; // Only DAUM service returns `type` ('space', 'spell'...).
+  common?: boolean; // Checks if the typo appears both in PNU and DAUM services.
 };
 
 /** Gets typos of the document. */
@@ -36,7 +37,7 @@ enum SpellCheckService {
 /**
  *  Spell checks the active document by PNU service, and sets docs2typos map.
  *
- *  Called by 'vscode-hanspell.spellCheckByPNU' command.
+ *  Called by `vscode-hanspell.spellCheckByPNU` command.
  */
 export function spellCheckByPNU(): void {
   vscode.window.withProgress(
@@ -55,7 +56,7 @@ export function spellCheckByPNU(): void {
 /**
  * Spell checks the active document by DAUM service, and sets docs2typos map.
  *
- * Called by 'vscode-hanspell.spellCheckByDAUM' command.
+ * Called by `vscode-hanspell.spellCheckByDAUM` command.
  */
 export function spellCheckByDAUM(): void {
   vscode.window.withProgress(
@@ -75,7 +76,7 @@ export function spellCheckByDAUM(): void {
  *  Spell checks the active document by PNU and DAUM service, and sets
  *  docs2typos map.
  *
- *  Called by 'vscode-hanspell.spellCheckByAll' command.
+ *  Called by `vscode-hanspell.spellCheckByAll` command.
  */
 export function spellCheckByAll(): void {
   vscode.window.withProgress(
@@ -134,7 +135,7 @@ function getIgnoreMatches(): IMinimatch {
   }
 }
 
-/** Spell checks the active document, and sets docs2typos map. */
+/** Spell checks the active document, and sets `docs2typos` map. */
 function spellCheck(service: SpellCheckService): Promise<string> {
   const editor = vscode.window.activeTextEditor;
 
@@ -146,7 +147,6 @@ function spellCheck(service: SpellCheckService): Promise<string> {
 
   const doc = editor.document;
 
-  // Due to PNU service's weird behavior.
   const text = doc.getText(
     editor.selection.isEmpty ? undefined : editor.selection,
   );
@@ -268,7 +268,7 @@ function uniq(
       : 0,
   );
 
-  // Sets typo.common and isUniq[i] for each element of sorted array.
+  // Sets `typo.common` and `isUniq[i]` for each element of sorted array.
   sorted.forEach((shortTypo, i) => {
     if (!isUniq[i]) {
       return;
