@@ -75,25 +75,14 @@ export class HanspellDiagnostic extends vscode.Diagnostic {
 
     super(
       range,
-      getTypoInfo(typo),
-      typo.duplicated === undefined || typo.duplicated === true
+      typo.info,
+      typo.duplicated !== false
         ? vscode.DiagnosticSeverity.Warning
         : vscode.DiagnosticSeverity.Information,
     );
 
     this.typo = typo;
     this.code = HANSPELL_MENTION;
-  }
-}
-
-/** PNU service has good typo.info, but DAUM service does not. So we ... */
-function getTypoInfo(typo: HanspellTypo): string {
-  if (typo.info) {
-    return typo.info;
-  } else if (typo.type === 'space') {
-    return '띄어쓰기 오류';
-  } else {
-    return '맞춤법 오류';
   }
 }
 

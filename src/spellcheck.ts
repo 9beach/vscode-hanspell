@@ -130,7 +130,7 @@ function getHanspellIgnore(): IMinimatch {
 }
 
 /** Spell checks the active document, and sets docs2typos map. */
-function spellCheck(server: SpellCheckService): Promise<string> {
+function spellCheck(service: SpellCheckService): Promise<string> {
   const editor = vscode.window.activeTextEditor;
 
   if (!editor) {
@@ -141,7 +141,7 @@ function spellCheck(server: SpellCheckService): Promise<string> {
 
   const doc = editor.document;
 
-  // Due to PNU server's weird behavior.
+  // Due to PNU service's weird behavior.
   const text = doc.getText(
     editor.selection.isEmpty ? undefined : editor.selection,
   );
@@ -151,18 +151,30 @@ function spellCheck(server: SpellCheckService): Promise<string> {
     let pnuFailed = false;
 
     function spellCheckDid(response: HanspellTypo[]): void {
+      if (service !== SpellCheckService.pnu) {
+        response.forEach((r) => {
+          /** PNU service has good typo.info, but DAUM service does not. */
+          if (r.info) {
+            return;
+          } else if (r.type === 'space') {
+            r.info = '띄어쓰기 오류';
+          } else {
+            r.info = '맞춤법 오류';
+          }
+        });
+      }
       typos = typos.concat(response);
     }
 
     function spellCheckFinished(): void {
       const ignores = getHanspellIgnore();
-      const reduced = SpellCheckService.all === server ? uniq(typos) : typos;
+      typos = uniq(typos, service);
 
       docs2typos.set(
         doc,
         !ignores.empty
-          ? reduced.filter((typo) => !ignores.match(typo.token))
-          : reduced,
+          ? typos.filter((typo) => !ignores.match(typo.token))
+          : typos,
       );
 
       refreshDiagnostics(doc);
@@ -176,7 +188,7 @@ function spellCheck(server: SpellCheckService): Promise<string> {
 
     const HTTP_TIMEOUT = 10000;
 
-    switch (server) {
+    switch (service) {
       case SpellCheckService.pnu:
         hanspell.spellCheckByPNU(
           text,
@@ -221,8 +233,19 @@ function spellCheck(server: SpellCheckService): Promise<string> {
   });
 }
 
+/** Only DAUM service sets type. */
+function isFromDifferentService(a: HanspellTypo, b: HanspellTypo) {
+  return (
+    (typeof a.type !== 'undefined' && typeof b.type === 'undefined') ||
+    (typeof a.type === 'undefined' && typeof b.type !== 'undefined')
+  );
+}
+
 /** Removes the duplicated or overlapping tokens from the typos array. */
-function uniq(typos: HanspellTypo[]): HanspellTypo[] {
+function uniq(
+  typos: HanspellTypo[],
+  service: SpellCheckService,
+): HanspellTypo[] {
   if (typos.length === 0) {
     return typos;
   }
@@ -242,18 +265,23 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
   const isUniq = Array(typosLen).fill(true);
 
   for (let i = 0; i < typosLen; i++) {
+    if (!isUniq[i]) {
+      continue;
+    }
+
+    if (service === SpellCheckService.all) {
+      sorted[i].duplicated = false;
+    }
+
     const shortToken = sorted[i].token;
 
     // Escapes regular expression special characters.
     const escaped = shortToken.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 
-    // Checks left-side characters.
-    const left = new RegExp(`[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣].*${escaped}`, 'g');
-
-    // Checks right-side characters.
-    const right = new RegExp(`${escaped}.*[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]`, 'g');
-
-    sorted[i].duplicated = false;
+    // Checks additional characters.
+    const leftOrRight = new RegExp(
+      `[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣].*${escaped}|${escaped}.*[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]`,
+    );
 
     for (let j = i + 1; j < typosLen; j++) {
       const longToken = sorted[j].token;
@@ -265,12 +293,15 @@ function uniq(typos: HanspellTypo[]): HanspellTypo[] {
       if (
         isUniq[j] &&
         longToken.indexOf(shortToken) !== -1 &&
-        !left.exec(longToken) &&
-        !right.exec(longToken)
+        !leftOrRight.exec(longToken)
       ) {
         isUniq[j] = false;
-        sorted[i].duplicated = true;
-        break; // At most, once for a token.
+        if (
+          service === SpellCheckService.all &&
+          isFromDifferentService(sorted[i], sorted[j])
+        ) {
+          sorted[i].duplicated = true;
+        }
       }
     }
   }
