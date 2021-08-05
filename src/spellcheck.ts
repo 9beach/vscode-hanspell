@@ -241,7 +241,7 @@ function isFromDifferentService(a: HanspellTypo, b: HanspellTypo) {
   );
 }
 
-/** Removes the duplicated or overlapping tokens from the typos array. */
+/** Removes same or nearly same tokens from the typos array. */
 function uniq(
   typos: HanspellTypo[],
   service: SpellCheckService,
@@ -250,68 +250,48 @@ function uniq(
     return typos;
   }
 
-  // Sorts array by length.
-  const sorted = typos.sort((a: HanspellTypo, b: HanspellTypo): number => {
-    if (a.token.length < b.token.length) {
-      return -1;
-    } else if (a.token.length > b.token.length) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-
-  const typosLen = sorted.length;
+  const typosLen = typos.length;
   const isUniq = Array(typosLen).fill(true);
 
-  for (let i = 0; i < typosLen; i++) {
+  // Sorts array by length.
+  const sorted = typos.sort((a: HanspellTypo, b: HanspellTypo): number =>
+    a.token.length < b.token.length
+      ? -1
+      : a.token.length > b.token.length
+      ? 1
+      : 0,
+  );
+
+  sorted.forEach((shortTypo, i) => {
     if (!isUniq[i]) {
-      continue;
+      return;
     }
 
     if (service === SpellCheckService.all) {
-      sorted[i].duplicated = false;
+      shortTypo.duplicated = false;
     }
 
-    const shortToken = sorted[i].token;
-
     // Escapes regular expression special characters.
-    const escaped = shortToken.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const escaped = shortTypo.token.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 
-    // Checks additional characters.
-    const leftOrRight = new RegExp(
-      `[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣].*${escaped}|${escaped}.*[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]`,
+    // Checks if longToken has no additional character.
+    const shortRegExp = new RegExp(
+      `^[^ㄱ-ㅎㅏ-ㅣ가-힣]*${escaped}[^ㄱ-ㅎㅏ-ㅣ가-힣]*$`,
     );
 
+    // Removes same or nearly same tokens.
     for (let j = i + 1; j < typosLen; j++) {
-      const longToken = sorted[j].token;
-
-      // Removes same or nearly same tokens.
-      //
-      // If '안녕 하세요' and '안녕 하세요.' exist, then removes '안녕 하세요.'. But
-      // '채마', '채마밭', '채마.밭' do not matter.
-      if (
-        isUniq[j] &&
-        longToken.indexOf(shortToken) !== -1 &&
-        !leftOrRight.exec(longToken)
-      ) {
+      if (isUniq[j] && shortRegExp.exec(sorted[j].token)) {
         isUniq[j] = false;
         if (
           service === SpellCheckService.all &&
-          isFromDifferentService(sorted[i], sorted[j])
+          isFromDifferentService(shortTypo, sorted[j])
         ) {
-          sorted[i].duplicated = true;
+          shortTypo.duplicated = true;
         }
       }
     }
-  }
+  });
 
-  const reduced = [];
-  for (let i = 0; i < typosLen; i++) {
-    if (isUniq[i]) {
-      reduced.push(sorted[i]);
-    }
-  }
-
-  return reduced;
+  return sorted.filter((_, i) => isUniq[i]);
 }
