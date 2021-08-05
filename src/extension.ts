@@ -108,7 +108,7 @@ function fixCommonTypos(args: { document: vscode.TextDocument }) {
   const uri = args.document.uri;
 
   getHanspellDiagnostics(args.document).forEach((diagnostic) => {
-    if (!diagnostic.typo.duplicated) {
+    if (!diagnostic.typo.common) {
       return;
     }
 

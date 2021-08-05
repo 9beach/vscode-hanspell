@@ -76,7 +76,7 @@ export class HanspellDiagnostic extends vscode.Diagnostic {
     super(
       range,
       typo.info,
-      typo.duplicated !== false
+      typo.common !== false
         ? vscode.DiagnosticSeverity.Warning
         : vscode.DiagnosticSeverity.Information,
     );

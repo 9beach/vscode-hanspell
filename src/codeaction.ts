@@ -38,11 +38,9 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
       );
     });
 
-    const duplicated = hanspellDiagnostics.some(
-      (diagnostic) => diagnostic.typo.duplicated === true,
-    );
-
-    if (duplicated) {
+    if (
+      hanspellDiagnostics.some((diagnostic) => diagnostic.typo.common === true)
+    ) {
       const action = new vscode.CodeAction(
         '다음, 부산대 공통 오류만 모두 교정',
         vscode.CodeActionKind.QuickFix,

@@ -19,7 +19,7 @@ export type HanspellTypo = {
   suggestions: string[];
   info: string;
   type?: string;
-  duplicated?: boolean; // Checks if it appears both in PNU and DAUM.
+  common?: boolean; // Checks if it appears both in PNU and DAUM.
 };
 
 /** Gets typos of the document. */
@@ -91,41 +91,46 @@ export function spellCheckByAll(): void {
   );
 }
 
+/** Glob patterns in `.hanspell-ignore` for avoiding from spell check. */
+let ignoreMatches = new Minimatch('');
+
+/** Last modified time of `.hanspell-ignore` */
 let ignoreLastModified = -1;
-let match = new Minimatch('');
+
+/** File path of `.hanspell-ignore` */
+const ignorePath = `${
+  process.env.HOME || process.env.USERPROFILE
+}/.hanspell-ignore`;
 
 /** Reads glob patterns in `.hanspell-ignore` to avoid from spell check. */
-function getHanspellIgnore(): IMinimatch {
+function getIgnoreMatches(): IMinimatch {
   try {
-    const path = `${
-      process.env.HOME || process.env.USERPROFILE
-    }/.hanspell-ignore`;
-    const stat = fs.statSync(path);
+    const stat = fs.statSync(ignorePath);
 
     if (stat === undefined) {
-      return match;
+      return ignoreMatches;
     }
 
     if (ignoreLastModified === stat.mtimeMs) {
-      return match;
+      return ignoreMatches;
     }
     ignoreLastModified = stat.mtimeMs;
 
     // '이딸리아*\n톨스또이\n,' => '{이딸리아*,톨스또이*,}'.
     const ignores = `{${fs
-      .readFileSync(path, 'utf8')
+      .readFileSync(ignorePath, 'utf8')
       .replace(/[,{}]/g, '\\$&')
       .replace(/\n\n*/g, ',')}}`;
 
     if (ignores.length >= 4) {
-      match = new Minimatch(ignores);
+      ignoreMatches = new Minimatch(ignores);
     } else {
-      match = new Minimatch('');
+      ignoreMatches = new Minimatch('');
     }
 
-    return match;
+    return ignoreMatches;
   } catch (err) {
-    return match;
+    return ignoreMatches;
   }
 }
 
@@ -167,7 +172,7 @@ function spellCheck(service: SpellCheckService): Promise<string> {
     }
 
     function spellCheckFinished(): void {
-      const ignores = getHanspellIgnore();
+      const ignores = getIgnoreMatches();
       typos = uniq(typos, service);
 
       docs2typos.set(
@@ -236,8 +241,8 @@ function spellCheck(service: SpellCheckService): Promise<string> {
 /** Only DAUM service sets type. */
 function isFromDifferentService(a: HanspellTypo, b: HanspellTypo) {
   return (
-    (typeof a.type !== 'undefined' && typeof b.type === 'undefined') ||
-    (typeof a.type === 'undefined' && typeof b.type !== 'undefined')
+    (a.type !== undefined && b.type === undefined) ||
+    (a.type === undefined && b.type !== undefined)
   );
 }
 
@@ -253,7 +258,7 @@ function uniq(
   const typosLen = typos.length;
   const isUniq = Array(typosLen).fill(true);
 
-  // Sorts array by length.
+  // Sorts typos by length.
   const sorted = typos.sort((a: HanspellTypo, b: HanspellTypo): number =>
     a.token.length < b.token.length
       ? -1
@@ -262,13 +267,14 @@ function uniq(
       : 0,
   );
 
+  // Sets typo.common and isUniq[i] for each element of sorted array.
   sorted.forEach((shortTypo, i) => {
     if (!isUniq[i]) {
       return;
     }
 
     if (service === SpellCheckService.all) {
-      shortTypo.duplicated = false;
+      shortTypo.common = false;
     }
 
     // Escapes regular expression special characters.
@@ -287,11 +293,12 @@ function uniq(
           service === SpellCheckService.all &&
           isFromDifferentService(shortTypo, sorted[j])
         ) {
-          shortTypo.duplicated = true;
+          shortTypo.common = true;
         }
       }
     }
   });
 
+  // Filters uniq elements.
   return sorted.filter((_, i) => isUniq[i]);
 }
