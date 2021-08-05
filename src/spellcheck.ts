@@ -146,7 +146,6 @@ function spellCheck(service: SpellCheckService): Promise<string> {
   }
 
   const doc = editor.document;
-
   const text = doc.getText(
     editor.selection.isEmpty ? undefined : editor.selection,
   );
@@ -247,6 +246,10 @@ function areFromDifferentServices(a: HanspellTypo, b: HanspellTypo) {
   );
 }
 
+/** Checks if `a.token` is longer than `b.token`. */
+const gt = (a: HanspellTypo, b: HanspellTypo) =>
+  a.token.length > b.token.length;
+
 /** Removes same or nearly same tokens from the typos array. */
 function uniq(
   typos: HanspellTypo[],
@@ -256,17 +259,11 @@ function uniq(
     return typos;
   }
 
-  const typosLen = typos.length;
-  const isUniq = Array(typosLen).fill(true);
+  // Checks if there are multiple instances of a typo. We don't need them.
+  const isUniq = Array(typos.length).fill(true);
 
   // Sorts typos by length.
-  const sorted = typos.sort((a: HanspellTypo, b: HanspellTypo): number =>
-    a.token.length < b.token.length
-      ? -1
-      : a.token.length > b.token.length
-      ? 1
-      : 0,
-  );
+  const sorted = typos.sort((a, b) => (gt(b, a) ? -1 : gt(a, b) ? 1 : 0));
 
   // Sets `typo.common` and `isUniq[i]` for each element of sorted array.
   sorted.forEach((shortTypo, i) => {
@@ -281,13 +278,13 @@ function uniq(
     // Escapes regular expression special characters.
     const escaped = shortTypo.token.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 
-    // Checks if longToken has no additional character.
+    // Checks if a long token (sorted[j].token) has no additional character.
     const shortRegExp = new RegExp(
       `^[^ㄱ-ㅎㅏ-ㅣ가-힣]*${escaped}[^ㄱ-ㅎㅏ-ㅣ가-힣]*$`,
     );
 
     // Removes same or nearly same tokens.
-    for (let j = i + 1; j < typosLen; j++) {
+    for (let j = i + 1; j < typos.length; j++) {
       if (isUniq[j] && shortRegExp.exec(sorted[j].token)) {
         isUniq[j] = false;
         if (
