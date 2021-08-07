@@ -85,7 +85,14 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
       action.command = {
         command: 'vscode-hanspell.fixTypo',
         title: 'Fix a typo',
-        arguments: [{ document, suggestion, range: diagnostic.range }],
+        arguments: [
+          {
+            document,
+            suggestion,
+            token: diagnostic.typo.token,
+            range: diagnostic.range,
+          },
+        ],
       };
 
       actions.push(action);

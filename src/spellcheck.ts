@@ -4,12 +4,11 @@
  */
 
 import * as vscode from 'vscode';
-import * as fs from 'fs';
-import { Minimatch, IMinimatch } from 'minimatch';
 
 const hanspell = require('hanspell');
 
 import { refreshDiagnostics } from './diagnostics';
+import { HanspellIgnore } from './ignore';
 
 /** Dictionary of `vscode.TextDocument` to `HanspellTypo[]`. */
 const docs2typos = new WeakMap();
@@ -92,49 +91,6 @@ export function spellCheckByAll(): void {
   );
 }
 
-/** Glob patterns in `.hanspell-ignore` for avoiding from spell check. */
-let ignoreMatches = new Minimatch('');
-
-/** Last modified time of `.hanspell-ignore` */
-let ignoreLastModified = -1;
-
-/** File path of `.hanspell-ignore` */
-const ignorePath = `${
-  process.env.HOME || process.env.USERPROFILE
-}/.hanspell-ignore`;
-
-/** Reads glob patterns in `.hanspell-ignore` to avoid from spell check. */
-function getIgnoreMatches(): IMinimatch {
-  try {
-    const stat = fs.statSync(ignorePath);
-
-    if (stat === undefined) {
-      return ignoreMatches;
-    }
-
-    if (ignoreLastModified === stat.mtimeMs) {
-      return ignoreMatches;
-    }
-    ignoreLastModified = stat.mtimeMs;
-
-    // '이딸리아*\n톨스또이\n,' => '{이딸리아*,톨스또이*,}'.
-    const ignores = `{${fs
-      .readFileSync(ignorePath, 'utf8')
-      .replace(/[,{}]/g, '\\$&')
-      .replace(/\n\n*/g, ',')}}`;
-
-    if (ignores.length >= 4) {
-      ignoreMatches = new Minimatch(ignores);
-    } else {
-      ignoreMatches = new Minimatch('');
-    }
-
-    return ignoreMatches;
-  } catch (err) {
-    return ignoreMatches;
-  }
-}
-
 /** Spell checks the active document, and sets `docs2typos` map. */
 function spellCheck(service: SpellCheckService): Promise<string> {
   const editor = vscode.window.activeTextEditor;
@@ -171,13 +127,13 @@ function spellCheck(service: SpellCheckService): Promise<string> {
     }
 
     function spellCheckFinished(): void {
-      const ignores = getIgnoreMatches();
       typos = uniq(typos, service);
+      const ignore = new HanspellIgnore();
 
       docs2typos.set(
         doc,
-        !ignores.empty
-          ? typos.filter((typo) => !ignores.match(typo.token))
+        !ignore.empty()
+          ? typos.filter((typo) => !ignore.match(typo.token))
           : typos,
       );
 
@@ -280,7 +236,7 @@ function uniq(
 
     // Checks if a long token (sorted[j].token) has no additional character.
     const shortRegExp = new RegExp(
-      `^[^ㄱ-ㅎㅏ-ㅣ가-힣]*${escaped}[^ㄱ-ㅎㅏ-ㅣ가-힣]*$`,
+      `^[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]*${escaped}[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]*$`,
     );
 
     // Removes same or nearly same tokens.

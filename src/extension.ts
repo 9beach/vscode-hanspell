@@ -4,6 +4,7 @@
  */
 
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 
 import { HanspellCodeAction } from './codeaction';
 import {
@@ -15,6 +16,14 @@ import {
   subscribeHanspellDiagnosticsToDocumentChanges,
   getHanspellDiagnostics,
 } from './diagnostics';
+
+/** Opens history file. */
+const hist = fs.createWriteStream(
+  `${process.env.HOME || process.env.USERPROFILE}/.hanspell-history`,
+  {
+    flags: 'a',
+  },
+);
 
 /** Called once the extension is activated. */
 export function activate(context: vscode.ExtensionContext) {
@@ -76,10 +85,12 @@ export function activate(context: vscode.ExtensionContext) {
 function fixTypo(args: {
   document: vscode.TextDocument;
   range: vscode.Range | vscode.Selection;
+  token: string;
   suggestion: string;
 }) {
   const edit = new vscode.WorkspaceEdit();
   edit.replace(args.document.uri, args.range, args.suggestion);
+  hist.write(`${args.token} -> ${args.suggestion}\n`);
   vscode.workspace.applyEdit(edit);
 }
 
@@ -94,6 +105,9 @@ function fixAllTypos(args: { document: vscode.TextDocument }) {
 
   getHanspellDiagnostics(args.document).forEach((diagnostic) => {
     edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);
+    hist.write(
+      `${diagnostic.typo.token} -> ${diagnostic.typo.suggestions[0]}\n`,
+    );
   });
   vscode.workspace.applyEdit(edit);
 }
@@ -113,6 +127,9 @@ function fixCommonTypos(args: { document: vscode.TextDocument }) {
     }
 
     edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);
+    hist.write(
+      `${diagnostic.typo.token} -> ${diagnostic.typo.suggestions[0]}\n`,
+    );
   });
   vscode.workspace.applyEdit(edit);
 }
