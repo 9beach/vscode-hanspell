@@ -1,6 +1,6 @@
 /**
- * Defines `HanspellTypo` type and the functions for spellCheck commands, and
- * creates dictionary of `vscode.TextDocument` to `HanspellTypo[]`.
+ * Defines the functions for spellCheck commands, and creates dictionary of
+ * `vscode.TextDocument` to `HanspellTypo[]`.
  */
 
 import * as vscode from 'vscode';
@@ -8,19 +8,12 @@ import * as vscode from 'vscode';
 const hanspell = require('hanspell');
 
 import { refreshDiagnostics } from './diagnostics';
+import { HanspellTypo } from './typo';
 import { HanspellIgnore } from './ignore';
+import { HanspellTypoDB } from './typo-db';
 
 /** Dictionary of `vscode.TextDocument` to `HanspellTypo[]`. */
 const docs2typos = new WeakMap();
-
-/** Carries the information of a typo. */
-export type HanspellTypo = {
-  token: string; // Typo token.
-  suggestions: string[]; // Fix suggestions.
-  info: string; // Typo info.
-  type?: string; // Only DAUM service returns `type` ('space', 'spell'...).
-  common?: boolean; // Checks if the typo appears both in PNU and DAUM services.
-};
 
 /** Gets typos of the document. */
 export const getTyposOfDocument = (doc: vscode.TextDocument): HanspellTypo[] =>
@@ -97,14 +90,16 @@ function spellCheck(service: SpellCheckService): Promise<string> {
 
   if (!editor) {
     return new Promise((resolve, reject) => {
-      return reject('먼저 검사할 문서를 선택하세요.');
+      return reject('검사할 문서가 없습니다.');
     });
   }
 
   const doc = editor.document;
-  const text = doc.getText(
+  let text = doc.getText(
     editor.selection.isEmpty ? undefined : editor.selection,
   );
+  // FIXME: `hanspell.spellCheckByDAUM` never returns with empty text.
+  text = text.length ? text : '\n';
 
   return new Promise((resolve, reject) => {
     let typos: HanspellTypo[] = [];
@@ -127,7 +122,7 @@ function spellCheck(service: SpellCheckService): Promise<string> {
     }
 
     function spellCheckFinished(): void {
-      typos = uniq(typos, service);
+      typos = uniq(typos.concat(HanspellTypoDB.getTypos()), service);
       const ignore = new HanspellIgnore();
 
       docs2typos.set(
@@ -198,7 +193,9 @@ function areFromDifferentServices(a: HanspellTypo, b: HanspellTypo) {
   // Only DAUM service sets type.
   return (
     (a.type !== undefined && b.type === undefined) ||
-    (a.type === undefined && b.type !== undefined)
+    (a.type === undefined && b.type !== undefined) ||
+    a.db === true ||
+    b.db === true
   );
 }
 
@@ -228,7 +225,13 @@ function uniq(
     }
 
     if (service === SpellCheckService.all) {
-      shortTypo.common = false;
+      if (shortTypo.db === true) {
+        shortTypo.common = true;
+      } else {
+        shortTypo.common = false;
+      }
+    } else {
+      shortTypo.common = undefined;
     }
 
     // Escapes regular expression special characters.

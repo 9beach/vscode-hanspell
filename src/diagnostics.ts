@@ -5,7 +5,8 @@
 
 import * as vscode from 'vscode';
 
-import { getTyposOfDocument, HanspellTypo } from './spellcheck';
+import { getTyposOfDocument } from './spellcheck';
+import { HanspellTypo } from './typo';
 
 /**
  * Used to associate diagnostic entries with code actions.

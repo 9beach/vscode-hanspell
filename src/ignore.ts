@@ -1,5 +1,5 @@
 /**
- * Defines `HanspellIgnore` class who matches tokens with glob patterns in
+ * Defines `HanspellIgnore` class which matches tokens with glob patterns in
  * `.hanspell-ignore` for avoiding from spell check.
  */
 
@@ -19,7 +19,7 @@ export class HanspellIgnore {
   static matches = new Minimatch('');
 
   /** Last modified time of `.hanspell-ignore` */
-  static ignoreLastModified = -1;
+  static lastModified = -1;
 
   /** Reads glob patterns in `.hanspell-ignore`. */
   static reload(): void {
@@ -27,13 +27,15 @@ export class HanspellIgnore {
       const stat = fs.statSync(HanspellIgnore.path);
 
       if (stat === undefined) {
+        HanspellIgnore.matches = new Minimatch('');
         return;
       }
 
-      if (HanspellIgnore.ignoreLastModified === stat.mtimeMs) {
+      if (HanspellIgnore.lastModified === stat.mtimeMs) {
         return;
       }
-      HanspellIgnore.ignoreLastModified = stat.mtimeMs;
+
+      HanspellIgnore.lastModified = stat.mtimeMs;
 
       // '이딸리아*\n톨스또이\n,' => '{이딸리아*,톨스또이*,}'.
       const ignores = `{${fs
@@ -47,7 +49,7 @@ export class HanspellIgnore {
         HanspellIgnore.matches = new Minimatch('');
       }
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
   }
 
