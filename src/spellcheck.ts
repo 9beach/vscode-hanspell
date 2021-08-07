@@ -203,7 +203,10 @@ function areFromDifferentServices(a: HanspellTypo, b: HanspellTypo) {
 const gt = (a: HanspellTypo, b: HanspellTypo) =>
   a.token.length > b.token.length;
 
-/** Removes same or nearly same tokens from the typos array. */
+/**
+ * Removes same or nearly same tokens from the typos array, and sets
+ * `HanspellTypo.common` and `HanspellTypo.regex`.
+ * */
 function uniq(
   typos: HanspellTypo[],
   service: SpellCheckService,
@@ -222,6 +225,17 @@ function uniq(
   sorted.forEach((shortTypo, i) => {
     if (!isUniq[i]) {
       return;
+    }
+
+    // Escapes regular expression special characters, and matches word boundary.
+    if (shortTypo.regex === undefined) {
+      shortTypo.regex = new RegExp(
+        `(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣]))${shortTypo.token.replace(
+          /[-/\\^$*+?.()|[\]{}]/g,
+          '\\$&',
+        )}((?=[^ㄱ-ㅎㅏ-ㅣ가-힣])|$)`,
+        'g',
+      );
     }
 
     if (service === SpellCheckService.all) {

@@ -39,21 +39,20 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
   const diagnostics: vscode.Diagnostic[] = [];
 
   typos.forEach((typo: HanspellTypo) => {
-    // Escapes regular expression special characters, and matches word boundary.
-    const pattern = new RegExp(
-      `(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣]))${typo.token.replace(
-        /[-/\\^$*+?.()|[\]{}]/g,
-        '\\$&',
-      )}((?=[^ㄱ-ㅎㅏ-ㅣ가-힣])|$)`,
-      'g',
-    );
-    const tokenLen = typo.token.length;
+    if (typo.regex === undefined) {
+      return;
+    }
+    typo.regex.lastIndex = 0;
 
     for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
       const line = doc.lineAt(lineIndex).text;
-      while (pattern.exec(line)) {
+      while (typo.regex.exec(line)) {
         diagnostics.push(
-          new HanspellDiagnostic(lineIndex, pattern.lastIndex - tokenLen, typo),
+          new HanspellDiagnostic(
+            lineIndex,
+            typo.regex.lastIndex - typo.token.length,
+            typo,
+          ),
         );
       }
     }
