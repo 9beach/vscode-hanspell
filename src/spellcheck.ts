@@ -30,20 +30,20 @@ enum SpellCheckService {
  *  Spell checks the active document by PNU service, and sets docs2typos map.
  */
 export const spellCheckByPNU = () =>
-  spellCheckWithProgress('맞춤법 검사(부산대) 중', SpellCheckService.pnu);
+  spellCheckWithProgress('맞춤법 검사 (부산대)', SpellCheckService.pnu);
 
 /**
  * Spell checks the active document by DAUM service, and sets docs2typos map.
  */
 export const spellCheckByDAUM = () =>
-  spellCheckWithProgress('맞춤법 검사(다음) 중', SpellCheckService.daum);
+  spellCheckWithProgress('맞춤법 검사 (다음)', SpellCheckService.daum);
 
 /**
  *  Spell checks the active document by PNU and DAUM service, and sets
  *  docs2typos map.
  */
 export const spellCheckByAll = () =>
-  spellCheckWithProgress('맞춤법 검사 중', SpellCheckService.all);
+  spellCheckWithProgress('맞춤법 검사', SpellCheckService.all);
 
 /** Calls `spellCheck` with progress bar. */
 function spellCheckWithProgress(
@@ -74,11 +74,9 @@ function spellCheck(service: SpellCheckService): Promise<string> {
   }
 
   const doc = editor.document;
-  let text = doc.getText(
+  const text = doc.getText(
     editor.selection.isEmpty ? undefined : editor.selection,
   );
-  // FIXME: `hanspell.spellCheckByDAUM` never returns with empty text.
-  text = text.length > 0 ? text : '\n';
 
   return new Promise((resolve, reject) => {
     let typos: HanspellTypo[] = [];
