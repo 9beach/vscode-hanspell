@@ -206,7 +206,7 @@ const gt = (a: HanspellTypo, b: HanspellTypo) =>
 /**
  * Removes same or nearly same tokens from the typos array, and sets
  * `HanspellTypo.common` and `HanspellTypo.regex`.
- * */
+ */
 function uniq(
   typos: HanspellTypo[],
   service: SpellCheckService,
