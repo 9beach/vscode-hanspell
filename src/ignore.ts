@@ -10,29 +10,43 @@ import { Minimatch } from 'minimatch';
  * Defines HanspellIgnore class.
  */
 export class HanspellIgnore {
+  constructor() {
+    this.myMatches = HanspellIgnore.get();
+  }
+
+  /** Checks if token matches content of `.hanspell-ignore` */
+  match = (token: string) => this.myMatches.match(token);
+
+  /** Checks if valid content of `.hanspell-ignore` is empty */
+  empty = () => this.myMatches.empty;
+
   /** File path of `.hanspell-ignore` */
-  static path = `${
+  private static readonly path = `${
     process.env.HOME || process.env.USERPROFILE
   }/.hanspell-ignore`;
 
   /** Glob patterns in `.hanspell-ignore` for avoiding from spell check. */
-  static matches = new Minimatch('');
+  private static readonly emptyMatches = new Minimatch('');
+  private static matches = HanspellIgnore.emptyMatches;
 
   /** Last modified time of `.hanspell-ignore` */
-  static lastModified = -1;
+  private static lastModified = -1;
+
+  /** Latest glob patterns. */
+  private myMatches;
 
   /** Reads glob patterns in `.hanspell-ignore`. */
-  static reload(): void {
+  private static get() {
     try {
       const stat = fs.statSync(HanspellIgnore.path);
 
       if (stat === undefined) {
-        HanspellIgnore.matches = new Minimatch('');
-        return;
+        HanspellIgnore.matches = HanspellIgnore.emptyMatches;
+        return HanspellIgnore.matches;
       }
 
       if (HanspellIgnore.lastModified === stat.mtimeMs) {
-        return;
+        return HanspellIgnore.matches;
       }
 
       HanspellIgnore.lastModified = stat.mtimeMs;
@@ -51,15 +65,6 @@ export class HanspellIgnore {
     } catch (err) {
       console.log(err);
     }
+    return HanspellIgnore.matches;
   }
-
-  constructor() {
-    HanspellIgnore.reload();
-  }
-
-  /** Checks if token matches content of `.hanspell-ignore` */
-  match = (token: string) => HanspellIgnore.matches.match(token);
-
-  /** Checks if valid content of `.hanspell-ignore` is empty */
-  empty = () => HanspellIgnore.matches.empty;
 }

@@ -10,17 +10,6 @@ import { HanspellTypo } from './typo';
  * Defines HanspellTypoDB class.
  */
 export class HanspellTypoDB {
-  /** File path of `.hanspell-typos` */
-  static path = `${
-    process.env.HOME || process.env.USERPROFILE
-  }/.hanspell-typos`;
-
-  /** HanspellTypo array in `.hanspell-typos`. */
-  static typos: HanspellTypo[] = [];
-
-  /** Last modified time of `.hanspell-typos` */
-  static lastModified = -1;
-
   /** Reads typos in `.hanspell-typos`. */
   static getTypos(): HanspellTypo[] {
     try {
@@ -56,4 +45,15 @@ export class HanspellTypoDB {
       return [];
     }
   }
+
+  /** File path of `.hanspell-typos` */
+  private static readonly path = `${
+    process.env.HOME || process.env.USERPROFILE
+  }/.hanspell-typos`;
+
+  /** HanspellTypo array in `.hanspell-typos`. */
+  private static typos: HanspellTypo[] = [];
+
+  /** Last modified time of `.hanspell-typos` */
+  private static lastModified = -1;
 }
