@@ -105,8 +105,8 @@ export function subscribeHanspellDiagnosticsToDocumentChanges(
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument((e) =>
-      refreshDiagnostics(e.document),
+    vscode.workspace.onDidChangeTextDocument((editor) =>
+      refreshDiagnostics(editor.document),
     ),
   );
 
