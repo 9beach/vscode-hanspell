@@ -28,57 +28,36 @@ enum SpellCheckService {
 
 /**
  *  Spell checks the active document by PNU service, and sets docs2typos map.
- *
- *  Called by `vscode-hanspell.spellCheckByPNU` command.
  */
-export function spellCheckByPNU(): void {
-  vscode.window.withProgress(
-    {
-      location: vscode.ProgressLocation.Notification,
-      title: '맞춤법 검사(부산대) 중입니다.',
-      cancellable: true,
-    },
-    () =>
-      spellCheck(SpellCheckService.pnu).catch((err) => {
-        vscode.window.showInformationMessage(err);
-      }),
-  );
-}
+export const spellCheckByPNU = () =>
+  spellCheckWithProgress('맞춤법 검사(부산대) 중', SpellCheckService.pnu);
 
 /**
  * Spell checks the active document by DAUM service, and sets docs2typos map.
- *
- * Called by `vscode-hanspell.spellCheckByDAUM` command.
  */
-export function spellCheckByDAUM(): void {
-  vscode.window.withProgress(
-    {
-      location: vscode.ProgressLocation.Notification,
-      title: '맞춤법 검사(다음) 중입니다.',
-      cancellable: true,
-    },
-    () =>
-      spellCheck(SpellCheckService.daum).catch((err) => {
-        vscode.window.showInformationMessage(err);
-      }),
-  );
-}
+export const spellCheckByDAUM = () =>
+  spellCheckWithProgress('맞춤법 검사(다음) 중', SpellCheckService.daum);
 
 /**
  *  Spell checks the active document by PNU and DAUM service, and sets
  *  docs2typos map.
- *
- *  Called by `vscode-hanspell.spellCheckByAll` command.
  */
-export function spellCheckByAll(): void {
+export const spellCheckByAll = () =>
+  spellCheckWithProgress('맞춤법 검사 중', SpellCheckService.all);
+
+/** Calls `spellCheck` with progress bar. */
+function spellCheckWithProgress(
+  title: string,
+  service: SpellCheckService,
+): void {
   vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: '맞춤법 검사(다음, 부산대) 중입니다.',
+      title,
       cancellable: true,
     },
     () =>
-      spellCheck(SpellCheckService.all).catch((err) => {
+      spellCheck(service).catch((err) => {
         vscode.window.showInformationMessage(err);
       }),
   );
@@ -99,7 +78,7 @@ function spellCheck(service: SpellCheckService): Promise<string> {
     editor.selection.isEmpty ? undefined : editor.selection,
   );
   // FIXME: `hanspell.spellCheckByDAUM` never returns with empty text.
-  text = text.length ? text : '\n';
+  text = text.length > 0 ? text : '\n';
 
   return new Promise((resolve, reject) => {
     let typos: HanspellTypo[] = [];
