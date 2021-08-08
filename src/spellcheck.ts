@@ -194,8 +194,8 @@ function areFromDifferentServices(a: HanspellTypo, b: HanspellTypo) {
   return (
     (a.type !== undefined && b.type === undefined) ||
     (a.type === undefined && b.type !== undefined) ||
-    a.db === true ||
-    b.db === true
+    a.local === true ||
+    b.local === true
   );
 }
 
@@ -239,7 +239,7 @@ function uniq(
     }
 
     if (service === SpellCheckService.all) {
-      if (shortTypo.db === true) {
+      if (shortTypo.local === true) {
         shortTypo.common = true;
       } else {
         shortTypo.common = false;
