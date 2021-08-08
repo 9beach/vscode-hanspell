@@ -27,20 +27,20 @@ enum SpellCheckService {
 }
 
 /**
- *  Spell checks the active document by PNU service, and sets docs2typos map.
+ * Spell checks the active document by PNU service, and sets `docs2typos` map.
  */
 export const spellCheckByPNU = () =>
   spellCheckWithProgress('맞춤법 검사 (부산대)', SpellCheckService.pnu);
 
 /**
- * Spell checks the active document by DAUM service, and sets docs2typos map.
+ * Spell checks the active document by DAUM service, and sets `docs2typos` map.
  */
 export const spellCheckByDAUM = () =>
   spellCheckWithProgress('맞춤법 검사 (다음)', SpellCheckService.daum);
 
 /**
- *  Spell checks the active document by PNU and DAUM service, and sets
- *  docs2typos map.
+ * Spell checks the active document by PNU and DAUM service, and sets
+ * `docs2typos` map.
  */
 export const spellCheckByAll = () =>
   spellCheckWithProgress('맞춤법 검사', SpellCheckService.all);
@@ -85,7 +85,7 @@ function spellCheck(service: SpellCheckService): Promise<string> {
     function spellCheckDid(response: HanspellTypo[]): void {
       if (service !== SpellCheckService.pnu) {
         response.forEach((r) => {
-          /** PNU service has good typo.info, but DAUM service does not. */
+          /** PNU service has good `typo.info`, but DAUM service does not. */
           if (r.info) {
             return;
           } else if (r.type === 'space') {
@@ -167,7 +167,7 @@ function spellCheck(service: SpellCheckService): Promise<string> {
 
 /** Checks if two typos are from different services. */
 function areFromDifferentServices(a: HanspellTypo, b: HanspellTypo) {
-  // Only DAUM service sets type.
+  // Only DAUM service has `HanspellTypo.type`.
   return (
     (a.type !== undefined && b.type === undefined) ||
     (a.type === undefined && b.type !== undefined) ||
@@ -177,7 +177,7 @@ function areFromDifferentServices(a: HanspellTypo, b: HanspellTypo) {
 }
 
 /** Checks if `a.token` is longer than `b.token`. */
-const gt = (a: HanspellTypo, b: HanspellTypo) =>
+const longerThan = (a: HanspellTypo, b: HanspellTypo): boolean =>
   a.token.length > b.token.length;
 
 /**
@@ -193,10 +193,15 @@ function uniq(
   }
 
   // Checks if there are multiple instances of a typo. We don't need them.
+  //
+  // e.g., if `sorted.map((t) => t.token)` is ['a', 'a', 'xyz', '  a.'],
+  // then `isUniq` is [true, false, true, false].
   const isUniq = Array(typos.length).fill(true);
 
   // Sorts typos by length.
-  const sorted = typos.sort((a, b) => (gt(b, a) ? -1 : gt(a, b) ? 1 : 0));
+  const sorted = typos.sort((a, b) =>
+    longerThan(b, a) ? -1 : longerThan(a, b) ? 1 : 0,
+  );
 
   // Sets `typo.common` and `isUniq[i]` for each element of sorted array.
   sorted.forEach((shortTypo, i) => {
@@ -204,13 +209,12 @@ function uniq(
       return;
     }
 
-    // Escapes regular expression special characters, and matches word boundary.
+    // Escapes regular expression special characters, and allocates `RegExp` to
+    // match word boundary later.
+    const escaped = shortTypo.token.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
     if (shortTypo.regex === undefined) {
       shortTypo.regex = new RegExp(
-        `(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣]))${shortTypo.token.replace(
-          /[-/\\^$*+?.()|[\]{}]/g,
-          '\\$&',
-        )}((?=[^ㄱ-ㅎㅏ-ㅣ가-힣])|$)`,
+        `(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))${escaped}((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)`,
         'g',
       );
     }
@@ -225,17 +229,14 @@ function uniq(
       shortTypo.common = undefined;
     }
 
-    // Escapes regular expression special characters.
-    const escaped = shortTypo.token.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-
-    // Checks if a long token (sorted[j].token) has no additional character.
-    const shortRegExp = new RegExp(
+    // Checks if a long token (sorted[j].token) has no additional letters.
+    const nearlySameToShortToken = new RegExp(
       `^[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]*${escaped}[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]*$`,
     );
 
     // Removes same or nearly same tokens.
     for (let j = i + 1; j < typos.length; j++) {
-      if (isUniq[j] && shortRegExp.exec(sorted[j].token)) {
+      if (isUniq[j] && nearlySameToShortToken.exec(sorted[j].token)) {
         isUniq[j] = false;
         if (
           service === SpellCheckService.all &&
@@ -247,6 +248,6 @@ function uniq(
     }
   });
 
-  // Filters uniq elements.
+  // Filters duplicated elements.
   return sorted.filter((_, i) => isUniq[i]);
 }
