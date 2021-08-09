@@ -33,7 +33,6 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
   const typos = DocumentsToTypos.getTypos(doc);
 
   if (!typos) {
-    console.log('skip!!!');
     return;
   }
 
