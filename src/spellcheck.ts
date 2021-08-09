@@ -84,14 +84,14 @@ function spellCheck(service: SpellCheckService): Promise<string> {
 
     function spellCheckDid(response: HanspellTypo[]): void {
       if (service !== SpellCheckService.pnu) {
-        response.forEach((r) => {
+        response.forEach((typo) => {
           /** PNU service has good `typo.info`, but DAUM service does not. */
-          if (r.info) {
+          if (typo.info) {
             return;
-          } else if (r.type === 'space') {
-            r.info = '띄어쓰기 오류';
+          } else if (typo.type === 'space') {
+            typo.info = '띄어쓰기 오류';
           } else {
-            r.info = '맞춤법 오류';
+            typo.info = '맞춤법 오류';
           }
         });
       }
@@ -118,7 +118,7 @@ function spellCheck(service: SpellCheckService): Promise<string> {
       }
     }
 
-    const HTTP_TIMEOUT = 10000;
+    const HTTP_TIMEOUT = 20000;
 
     switch (service) {
       case SpellCheckService.pnu:
@@ -127,8 +127,9 @@ function spellCheck(service: SpellCheckService): Promise<string> {
           HTTP_TIMEOUT,
           spellCheckDid,
           spellCheckFinished,
-          (): void =>
-            reject('부산대 서비스 접속 오류로 맞춤법 교정에 실패했습니다.'),
+          (): void => {
+            pnuFailed = true;
+          },
         );
         break;
       case SpellCheckService.daum:
