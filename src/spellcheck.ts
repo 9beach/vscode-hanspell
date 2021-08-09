@@ -12,12 +12,22 @@ import { HanspellTypo } from './typo';
 import { HanspellIgnore } from './ignore';
 import { HanspellTypoDB } from './typo-db';
 
-/** Dictionary of `vscode.TextDocument` to `HanspellTypo[]`. */
-const docs2typos = new WeakMap();
+/** Class for dictionary of `vscode.TextDocument` to `HanspellTypo[]`. */
+export class DocumentsToTypos {
+  /** Dictionary of `vscode.TextDocument` to `HanspellTypo[]`. */
+  private static docs2typos = new WeakMap();
 
-/** Gets typos of the document. */
-export const getTyposOfDocument = (doc: vscode.TextDocument): HanspellTypo[] =>
-  docs2typos.get(doc);
+  /** Maximum size of typos for ... */
+  private static readonly maxTypos = 100;
+
+  /** Gets typos of the document. */
+  static getTypos = (doc: vscode.TextDocument) =>
+    DocumentsToTypos.docs2typos.get(doc);
+
+  /** Sets typos of the document. */
+  static setTypos = (doc: vscode.TextDocument, typos: HanspellTypo[]) =>
+    DocumentsToTypos.docs2typos.set(doc, typos);
+}
 
 /** Spell check service type. */
 enum SpellCheckService {
@@ -26,22 +36,15 @@ enum SpellCheckService {
   all,
 }
 
-/**
- * Spell checks the active document by PNU service, and sets `docs2typos` map.
- */
+/** Spell checks the active document by PNU service. */
 export const spellCheckByPNU = () =>
   spellCheckWithProgress('맞춤법 검사 (부산대)', SpellCheckService.pnu);
 
-/**
- * Spell checks the active document by DAUM service, and sets `docs2typos` map.
- */
+/** Spell checks the active document by DAUM service. */
 export const spellCheckByDAUM = () =>
   spellCheckWithProgress('맞춤법 검사 (다음)', SpellCheckService.daum);
 
-/**
- * Spell checks the active document by PNU and DAUM service, and sets
- * `docs2typos` map.
- */
+/** Spell checks the active document by PNU and DAUM service. */
 export const spellCheckByAll = () =>
   spellCheckWithProgress('맞춤법 검사', SpellCheckService.all);
 
@@ -63,7 +66,7 @@ function spellCheckWithProgress(
   );
 }
 
-/** Spell checks the active document, and sets `docs2typos` map. */
+/** Spell checks the active document, and sets `DocumentsToTypos.docs2typos`. */
 function spellCheck(service: SpellCheckService): Promise<string> {
   const editor = vscode.window.activeTextEditor;
 
@@ -102,7 +105,7 @@ function spellCheck(service: SpellCheckService): Promise<string> {
       typos = uniq(typos.concat(HanspellTypoDB.getTypos()), service);
       const ignore = new HanspellIgnore();
 
-      docs2typos.set(
+      DocumentsToTypos.setTypos(
         doc,
         !ignore.empty()
           ? typos.filter((typo) => !ignore.match(typo.token))

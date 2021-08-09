@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 
-import { getTyposOfDocument } from './spellcheck';
+import { DocumentsToTypos } from './spellcheck';
 import { HanspellTypo } from './typo';
 
 /**
@@ -30,9 +30,10 @@ export function getHanspellDiagnostics(
  * Automatically called when the document is edited.
  */
 export function refreshDiagnostics(doc: vscode.TextDocument): void {
-  const typos = getTyposOfDocument(doc);
+  const typos = DocumentsToTypos.getTypos(doc);
 
   if (!typos) {
+    console.log('skip!!!');
     return;
   }
 

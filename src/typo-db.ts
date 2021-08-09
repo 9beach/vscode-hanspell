@@ -6,9 +6,7 @@ import * as fs from 'fs';
 
 import { HanspellTypo } from './typo';
 
-/**
- * Defines HanspellTypoDB class.
- */
+/** Carries user defined typos from `~/.hanspell-typos`. */
 export class HanspellTypoDB {
   /** Reads typos in `.hanspell-typos`. */
   static getTypos(): HanspellTypo[] {
