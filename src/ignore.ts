@@ -63,7 +63,7 @@ export class HanspellIgnore {
         HanspellIgnore.matches = new Minimatch('');
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
     return HanspellIgnore.matches;
   }

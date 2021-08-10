@@ -39,7 +39,7 @@ export class HanspellTypoDB {
 
       return HanspellTypoDB.typos;
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       return [];
     }
   }

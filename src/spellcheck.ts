@@ -93,8 +93,15 @@ function spellCheck(service: SpellCheckService): Promise<string> {
             return;
           } else if (typo.type === 'space') {
             typo.info = '띄어쓰기 오류';
+          } else if (typo.type === 'doubt') {
+            typo.info = '오류 의심';
+          } else if (typo.type === 'space_spell') {
+            typo.info = '맞춤법/띄어쓰기 오류';
+          } else if (typo.type === 'spell') {
+            typo.info = '맞춤법 오류';
           } else {
             typo.info = '맞춤법 오류';
+            console.log(`새로운 오류 타입 발견: ${typo.type}`);
           }
         });
       }
