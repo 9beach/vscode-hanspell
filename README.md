@@ -79,7 +79,7 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
 내노라하는 -> 내로라하는
 ```
 
-아래는 자주 틀린 맞춤법 20개로 `~/.hanspell-typos` 파일을 만드는 셸 스크립트입니다. 리눅스나 맥 OS에서만 작동합니다.
+아래는 자주 틀리는 맞춤법 20개로 `~/.hanspell-typos` 파일을 만드는 셸 스크립트입니다. 리눅스나 맥 OS에서만 작동합니다.
 
 ```bash
 sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-9][0-9]* \(.*\):\1:' > ~/.hanspell-typos
