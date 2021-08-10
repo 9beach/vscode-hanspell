@@ -36,12 +36,12 @@ export class HanspellTypoDB {
             local: true,
           };
         });
-
-      return HanspellTypoDB.typos;
     } catch (err) {
       console.log(err.message);
-      return [];
+
+      HanspellTypoDB.typos = [];
     }
+    return HanspellTypoDB.typos;
   }
 
   /** File path of `.hanspell-typos` */

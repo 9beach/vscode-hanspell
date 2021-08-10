@@ -60,10 +60,12 @@ export class HanspellIgnore {
       if (ignores.length >= 4) {
         HanspellIgnore.matches = new Minimatch(ignores);
       } else {
-        HanspellIgnore.matches = new Minimatch('');
+        HanspellIgnore.matches = HanspellIgnore.emptyMatches;
       }
     } catch (err) {
       console.log(err.message);
+
+      HanspellIgnore.matches = HanspellIgnore.emptyMatches;
     }
     return HanspellIgnore.matches;
   }
