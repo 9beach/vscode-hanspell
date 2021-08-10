@@ -17,9 +17,6 @@ export class DocumentsToTypos {
   /** Dictionary of `vscode.TextDocument` to `HanspellTypo[]`. */
   private static docs2typos = new WeakMap();
 
-  /** Maximum size of typos for ... */
-  private static readonly maxTypos = 100;
-
   /** Gets typos of the document. */
   static getTypos = (doc: vscode.TextDocument) =>
     DocumentsToTypos.docs2typos.get(doc);
