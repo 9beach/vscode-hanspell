@@ -87,7 +87,7 @@ export class HanspellDiagnostic extends vscode.Diagnostic {
 }
 
 /** Subscribes `refreshDiagnostics` to documents change events. */
-export function subscribeHanspellDiagnosticsToDocumentChanges(
+export function subscribeDiagnosticsToDocumentChanges(
   context: vscode.ExtensionContext,
 ): void {
   context.subscriptions.push(hanspellDiagnostics);

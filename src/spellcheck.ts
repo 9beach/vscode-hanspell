@@ -7,7 +7,6 @@ import * as vscode from 'vscode';
 
 const hanspell = require('hanspell');
 
-import { refreshDiagnostics } from './diagnostics';
 import { HanspellTypo } from './typo';
 import { HanspellIgnore } from './ignore';
 import { HanspellTypoDB } from './typo-db';
@@ -27,52 +26,17 @@ export class DocumentsToTypos {
 }
 
 /** Spell check service type. */
-enum SpellCheckService {
+export enum SpellCheckService {
   pnu = 0,
   daum,
   all,
 }
 
-/** Spell checks the active document by PNU service. */
-export const spellCheckByPNU = () =>
-  spellCheckWithProgress('맞춤법 검사 (부산대)', SpellCheckService.pnu);
-
-/** Spell checks the active document by DAUM service. */
-export const spellCheckByDAUM = () =>
-  spellCheckWithProgress('맞춤법 검사 (다음)', SpellCheckService.daum);
-
-/** Spell checks the active document by PNU and DAUM service. */
-export const spellCheckByAll = () =>
-  spellCheckWithProgress('맞춤법 검사', SpellCheckService.all);
-
-/** Calls `spellCheck` with progress bar. */
-function spellCheckWithProgress(
-  title: string,
+/** Spell checks the given document, and calls `DocumentsToTypos.setTypos`. */
+export function spellCheck(
+  editor: vscode.TextEditor,
   service: SpellCheckService,
-): void {
-  vscode.window.withProgress(
-    {
-      location: vscode.ProgressLocation.Notification,
-      title,
-      cancellable: true,
-    },
-    () =>
-      spellCheck(service).catch((err) => {
-        vscode.window.showInformationMessage(err);
-      }),
-  );
-}
-
-/** Spell checks the active document, and sets `DocumentsToTypos.docs2typos`. */
-function spellCheck(service: SpellCheckService): Promise<string> {
-  const editor = vscode.window.activeTextEditor;
-
-  if (!editor) {
-    return new Promise((resolve, reject) => {
-      return reject('검사할 문서가 없습니다.');
-    });
-  }
-
+): Promise<string> {
   const doc = editor.document;
   const text = doc.getText(
     editor.selection.isEmpty ? undefined : editor.selection,
@@ -106,17 +70,14 @@ function spellCheck(service: SpellCheckService): Promise<string> {
     }
 
     function spellCheckFinished(): void {
-      typos = uniq(typos.concat(HanspellTypoDB.getTypos()), service);
       const ignore = new HanspellIgnore();
 
-      DocumentsToTypos.setTypos(
-        doc,
-        !ignore.empty()
-          ? typos.filter((typo) => !ignore.match(typo.token))
-          : typos,
-      );
+      typos = uniq(typos.concat(HanspellTypoDB.getTypos()), service);
+      typos = ignore.empty()
+        ? typos
+        : typos.filter((typo) => !ignore.match(typo.token));
 
-      refreshDiagnostics(doc);
+      DocumentsToTypos.setTypos(doc, typos);
 
       if (pnuFailed) {
         reject('부산대 서비스 접속 오류로 일부 문장은 교정하지 못했습니다.');
@@ -218,7 +179,7 @@ function uniq(
     }
 
     // Escapes regular expression special characters, and allocates `RegExp` to
-    // match word boundary later.
+    // match word boundary later in `refreshDiagnostics()` or somewhere.
     const escaped = shortTypo.token.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
     if (shortTypo.regex === undefined) {
       shortTypo.regex = new RegExp(

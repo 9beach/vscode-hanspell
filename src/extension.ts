@@ -11,9 +11,9 @@ import {
   spellCheckByDAUM,
   spellCheckByPNU,
   spellCheckByAll,
-} from './spellcheck';
+} from './spellcheck-commands';
 import {
-  subscribeHanspellDiagnosticsToDocumentChanges,
+  subscribeDiagnosticsToDocumentChanges,
   getHanspellDiagnostics,
 } from './diagnostics';
 
@@ -28,7 +28,7 @@ const hist = fs.createWriteStream(
 /** Called once the extension is activated. */
 export function activate(context: vscode.ExtensionContext) {
   // Subscribes `refreshDiagnostics` to documents change events.
-  subscribeHanspellDiagnosticsToDocumentChanges(context);
+  subscribeDiagnosticsToDocumentChanges(context);
 
   // Registers the code actions for `vscode-hanspell.fixTypo`,
   // `vscode-hanspell.fixAllTypos`, and `vscode-hanspell.fixCommonTypos`.
