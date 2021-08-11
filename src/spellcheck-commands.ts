@@ -1,12 +1,10 @@
-/**
- * Defines the functions for spellCheck commands, and creates dictionary of
- * `vscode.TextDocument` to `HanspellTypo[]`.
- */
+/** Defines the functions for `vscode-hanspell.spellCheckByXXX` commands. */
 
 import * as vscode from 'vscode';
 
 import { refreshDiagnostics } from './diagnostics';
-import { SpellCheckService, spellCheck } from './spellcheck';
+import { spellCheck } from './spellcheck';
+import { SpellCheckService } from './service';
 
 /** Spell checks the active document by PNU service. */
 export const spellCheckByPNU = () =>
@@ -20,7 +18,7 @@ export const spellCheckByDAUM = () =>
 export const spellCheckByAll = () =>
   spellCheckWithProgress('맞춤법 검사', SpellCheckService.all);
 
-/** Calls `spellCheck` with progress bar. */
+/** Calls `spellCheck()` with progress bar, and `refreshDiagnostics()`. */
 function spellCheckWithProgress(
   title: string,
   service: SpellCheckService,

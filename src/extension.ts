@@ -1,6 +1,6 @@
 /**
  * Defines the functions for the code action commands, and registers them,
- * spellCheck-related commands, and `refreshDiagnostics`.
+ * spellcheck related commands, and `refreshDiagnostics`.
  */
 
 import * as vscode from 'vscode';

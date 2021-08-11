@@ -1,14 +1,7 @@
-/**
- * Defines the functions for spellCheck commands, and creates dictionary of
- * `vscode.TextDocument` to `HanspellTypo[]`.
- */
-
-import * as vscode from 'vscode';
-
-const hanspell = require('hanspell');
+/** Defines `uniq()` function. */
 
 import { HanspellTypo } from './typo';
-import { SpellCheckService } from './spellcheck';
+import { SpellCheckService } from './service';
 
 /** Checks if two typos are from different services. */
 function areFromDifferentServices(a: HanspellTypo, b: HanspellTypo) {

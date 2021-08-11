@@ -1,6 +1,4 @@
-/**
- * Defines `HanspellTypo` type.
- */
+/** Defines `HanspellTypo` type. */
 
 /** Carries the information of a typo. */
 export type HanspellTypo = {

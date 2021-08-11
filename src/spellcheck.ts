@@ -1,16 +1,14 @@
-/**
- * Defines the functions for spellCheck commands, and creates dictionary of
- * `vscode.TextDocument` to `HanspellTypo[]`.
- */
+/** Defines `DocumentsToTypos` class and `spellCheck()` function. */
 
 import * as vscode from 'vscode';
 
 const hanspell = require('hanspell');
 
 import { HanspellTypo } from './typo';
+import { SpellCheckService } from './service';
+import { uniq } from './uniq';
 import { HanspellIgnore } from './ignore';
 import { HanspellTypoDB } from './typo-db';
-import { uniq } from './uniq';
 
 /** Class for dictionary of `vscode.TextDocument` to `HanspellTypo[]`. */
 export class DocumentsToTypos {
@@ -26,14 +24,8 @@ export class DocumentsToTypos {
     DocumentsToTypos.docs2typos.set(doc, typos);
 }
 
-/** Spell check service type. */
-export enum SpellCheckService {
-  pnu = 0,
-  daum,
-  all,
-}
-
-/** Spell checks the given document, and calls `DocumentsToTypos.setTypos`. */
+/** Spell checks the given document, makes `HanspellTypo[]`, and set them to
+ *  `DocumentsToTypos`. */
 export function spellCheck(
   editor: vscode.TextEditor,
   service: SpellCheckService,

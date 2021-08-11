@@ -1,6 +1,4 @@
-/**
- * Defines `HanspellTypoDB` class for offline typo fixing.
- */
+/** Defines `HanspellTypoDB` class for offline typo fixing. */
 
 import * as fs from 'fs';
 
