@@ -2,7 +2,10 @@
 
 /** Spell check service type. */
 export enum SpellCheckService {
+  // Pusan National University.
   pnu = 0,
+  // Daum.
   daum,
+  // All of them.
   all,
 }
