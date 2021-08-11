@@ -1,6 +1,6 @@
 /**
- * Defines `HanspellIgnore` class which matches tokens with glob patterns in
- * `.hanspell-ignore` for avoiding from spell check.
+ * Defines `HanspellIgnore` class which matches typo tokens with glob patterns
+ * in `.hanspell-ignore` for avoiding from spell check.
  */
 
 import * as fs from 'fs';

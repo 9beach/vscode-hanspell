@@ -1,4 +1,4 @@
-/** Defines the functions for `vscode-hanspell.spellCheckByXXX` commands. */
+/** Defines the functions for spellcheck-related commands. */
 
 import * as vscode from 'vscode';
 

@@ -1,5 +1,7 @@
 /**
  * Defines `HanspellCodeAction` class.
+ *
+ * `HanspellTypo` makes `HanspellDiagnostic` makes `HanspellCodeAction`.
  */
 
 import * as vscode from 'vscode';
