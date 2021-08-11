@@ -24,8 +24,10 @@ export class DocumentsToTypos {
     DocumentsToTypos.docs2typos.set(doc, typos);
 }
 
-/** Spell checks the given document, makes `HanspellTypo[]`, and set them to
- *  `DocumentsToTypos`. */
+/**
+ * Spell checks the given document, makes `HanspellTypo[]`, and set them to
+ * `DocumentsToTypos`.
+ */
 export function spellCheck(
   editor: vscode.TextEditor,
   service: SpellCheckService,
