@@ -4,8 +4,8 @@
  */
 
 import * as vscode from 'vscode';
-import * as fs from 'fs';
 
+import { HanspellHistory } from './history';
 import { HanspellCodeAction } from './codeaction';
 import {
   spellCheckByDAUM,
@@ -17,16 +17,10 @@ import {
   getHanspellDiagnostics,
 } from './diagnostics';
 
-/** Opens history file. */
-const hist = fs.createWriteStream(
-  `${process.env.HOME || process.env.USERPROFILE}/.hanspell-history`,
-  {
-    flags: 'a',
-  },
-);
-
 /** Called once the extension is activated. */
 export function activate(context: vscode.ExtensionContext) {
+  HanspellHistory.backupIfTooLarge();
+
   // Subscribes `refreshDiagnostics` to documents change events.
   subscribeDiagnosticsToDocumentChanges(context);
 
@@ -90,7 +84,7 @@ function fixTypo(args: {
 }) {
   const edit = new vscode.WorkspaceEdit();
   edit.replace(args.document.uri, args.range, args.suggestion);
-  hist.write(`${args.token} -> ${args.suggestion}\n`);
+  HanspellHistory.writeOnce(`${args.token} -> ${args.suggestion}\n`);
   vscode.workspace.applyEdit(edit);
 }
 
@@ -102,6 +96,7 @@ function fixTypo(args: {
 function fixAllTypos(args: { document: vscode.TextDocument }) {
   const edit = new vscode.WorkspaceEdit();
   const uri = args.document.uri;
+  const hist = new HanspellHistory();
 
   getHanspellDiagnostics(args.document).forEach((diagnostic) => {
     edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);
@@ -109,7 +104,9 @@ function fixAllTypos(args: { document: vscode.TextDocument }) {
       `${diagnostic.typo.token} -> ${diagnostic.typo.suggestions[0]}\n`,
     );
   });
+
   vscode.workspace.applyEdit(edit);
+  hist.end();
 }
 
 /**
@@ -120,16 +117,18 @@ function fixAllTypos(args: { document: vscode.TextDocument }) {
 function fixCommonTypos(args: { document: vscode.TextDocument }) {
   const edit = new vscode.WorkspaceEdit();
   const uri = args.document.uri;
+  const hist = new HanspellHistory();
 
   getHanspellDiagnostics(args.document).forEach((diagnostic) => {
     if (!diagnostic.typo.common) {
       return;
     }
-
     edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);
     hist.write(
       `${diagnostic.typo.token} -> ${diagnostic.typo.suggestions[0]}\n`,
     );
   });
+
   vscode.workspace.applyEdit(edit);
+  hist.end();
 }

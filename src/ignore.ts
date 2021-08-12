@@ -1,12 +1,12 @@
-/**
- * Defines `HanspellIgnore` class which matches typo tokens with glob patterns
- * in `.hanspell-ignore` for avoiding from spell check.
- */
+/** Defines `HanspellIgnore` class. */
 
 import * as fs from 'fs';
 import { Minimatch } from 'minimatch';
 
-/** Defines HanspellIgnore class. */
+/**
+ * Defines `HanspellIgnore` class which matches typo tokens with glob patterns
+ * in `.hanspell-ignore` for avoiding from spell check.
+ */
 export class HanspellIgnore {
   constructor() {
     this.myMatches = HanspellIgnore.get();
