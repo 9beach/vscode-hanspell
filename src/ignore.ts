@@ -6,9 +6,7 @@
 import * as fs from 'fs';
 import { Minimatch } from 'minimatch';
 
-/**
- * Defines HanspellIgnore class.
- */
+/** Defines HanspellIgnore class. */
 export class HanspellIgnore {
   constructor() {
     this.myMatches = HanspellIgnore.get();
