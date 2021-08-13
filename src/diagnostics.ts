@@ -40,6 +40,7 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
 
   typos.forEach((typo: HanspellTypo) => {
     if (typo.regex === undefined) {
+      console.error(typo.token);
       return;
     }
     typo.regex.lastIndex = 0;

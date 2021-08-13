@@ -74,7 +74,7 @@ export function uniq(
 
     // Removes same or nearly same tokens.
     for (let j = i + 1; j < typos.length; j++) {
-      if (isUniq[j] && nearlySameToShortToken.exec(sorted[j].token)) {
+      if (isUniq[j] && sorted[j].token.match(nearlySameToShortToken)) {
         isUniq[j] = false;
         if (
           service === SpellCheckService.all &&
