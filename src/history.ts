@@ -34,7 +34,7 @@ export class HanspellHistory {
       if (stat === undefined) {
         return;
       }
-      if (stat.size > 1024 * 1024) {
+      if (stat.size > 10 * 1024 * 1024) {
         for (let i = 1; i < 10000; ++i) {
           const newPath = `${HanspellHistory.path}.${i}`;
           if (!fs.existsSync(newPath)) {

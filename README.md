@@ -60,7 +60,7 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
    7 내노라하는 -> 내로라하는
 ```
 
-`.hanspell-history` 크기가 1MB를 넘으면 `.hanspell-history.N`(`N`은 1, 2, 3...)으로 백업한 뒤 새로 만듭니다.
+`.hanspell-history` 크기가 10MB를 넘으면 `.hanspell-history.N`(`N`은 1, 2, 3...)으로 백업한 뒤 새로 만듭니다.
 
 ### 자동 맞춤법 검사
 
