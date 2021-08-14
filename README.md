@@ -72,8 +72,6 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
 했을뿐 -> 했을 뿐
 금새 -> 금세
 익숙치 -> 익숙지
-월단위로 -> 월 단위로
-한 달 간 -> 한 달간
 ```
 
 아래는 자주 틀리는 맞춤법 20개로 `~/.hanspell-typos` 파일을 만드는 셸 스크립트입니다.
