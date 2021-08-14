@@ -4,7 +4,7 @@
 
 ### 변경된 기능
 
-- 온라인 검사 결과보다 `~/.hanspell-typos` 우선
+- 온라인 검사 결과보다 `~/.hanspell-typos` 내용을 우선
 - `~/.hanspell-typos` 내용은 `~/.hanspell-ignore` 적용 대상에서 제외
 - 한글을 포함하지 않은 오류는 분석 결과에서 제외
 
@@ -26,7 +26,7 @@
 ### 추가된 기능
 
 - 히스토리 파일 (`~/.hanspell-history`)
-- 자동 맞춤법 검사 (`~/.hanspell-typos`)
+- 사용자 맞춤법 정의 (`~/.hanspell-typos`)
 
 ## [0.3.6] - 2021-08-04
 

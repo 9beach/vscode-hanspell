@@ -30,7 +30,7 @@ export class HanspellTypoDB {
           return {
             token: lr[0],
             suggestions: [lr[1]],
-            info: '사용자 맞춤법 데이터베이스 (~/.hanspell-typos)',
+            info: '사용자 맞춤법 데이터베이스',
             local: true,
           };
         });
