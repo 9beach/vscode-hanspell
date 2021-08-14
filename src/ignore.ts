@@ -13,10 +13,14 @@ export class HanspellIgnore {
   }
 
   /** Checks if token matches content of `.hanspell-ignore` */
-  match = (token: string) => this.myMatches.match(token);
+  match = (token: string) =>
+    this.myMatches.match(token) || !token.match(HanspellIgnore.hangul);
 
   /** Checks if valid content of `.hanspell-ignore` is empty */
   empty = () => this.myMatches.empty;
+
+  /** Used to check if at least one hangul character exists. */
+  private static readonly hangul = /[ㄱ-ㅎㅏ-ㅣ가-힣]/;
 
   /** File path of `.hanspell-ignore` */
   private static readonly path = `${

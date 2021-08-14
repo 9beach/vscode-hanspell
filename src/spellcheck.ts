@@ -67,10 +67,10 @@ export function spellCheck(
     function spellCheckFinished(): void {
       const ignore = new HanspellIgnore();
 
-      typos = uniq(typos.concat(HanspellTypoDB.getTypos()), service);
       typos = ignore.empty()
         ? typos
         : typos.filter((typo) => !ignore.match(typo.token));
+      typos = uniq(HanspellTypoDB.getTypos().concat(typos), service);
 
       DocumentsToTypos.setTypos(doc, typos);
 
