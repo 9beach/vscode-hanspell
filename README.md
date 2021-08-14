@@ -40,6 +40,8 @@
 
 `~/.hanspell-history` 파일에는 맞춤법 교정 내용이 기록됩니다. 교정 메뉴나 `Shift+Alt+.` 키를 이용하지 않고 직접 수정한 것은 기록되지 않습니다.
 
+파일 크기가 10MB를 넘으면 `.hanspell-history.N`(`N`은 1, 2, 3...)으로 백업한 뒤 새로 만듭니다.
+
 아래는 사용자가 자주 틀리는 맞춤법을 빈도순으로 보여주는 셸 스크립트입니다. 리눅스나 macOS 환경에서만 작동합니다.
 
 ```console
@@ -50,8 +52,6 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
   13 한바퀴 -> 한 바퀴
    7 내노라하는 -> 내로라하는
 ```
-
-`.hanspell-history` 크기가 10MB를 넘으면 `.hanspell-history.N`(`N`은 1, 2, 3...)으로 백업한 뒤 새로 만듭니다.
 
 ### 사용자 맞춤법 정의
 
