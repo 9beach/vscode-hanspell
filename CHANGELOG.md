@@ -26,7 +26,7 @@
 ### 추가된 기능
 
 - 히스토리 파일 (`~/.hanspell-history`)
-- 사용자 맞춤법 정의 (`~/.hanspell-typos`)
+- 사용자 정의 맞춤법 (`~/.hanspell-typos`)
 
 ## [0.3.6] - 2021-08-04
 
