@@ -90,7 +90,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 이딸리아
 ```
 
-이제 `톨스또이`, `톨스토이가` 등 `톨스또이`로 시작하는 것은 맞춤법 오류에서 제외하고 표시합니다. 반면 `이딸리아`는 제외하지만 `이딸리아에서`는 오류로 표시합니다.
+이제 `톨스또이`, `톨스토이가` 등 `톨스또이`로 시작하는 것은 맞춤법 오류에서 제외합니다. 반면 `이딸리아`는 제외하지만 `이딸리아에서`는 오류로 간주합니다.
 
 `.hanspell-ignore`는 [글로브 패턴](<https://ko.wikipedia.org/wiki/글로브_(프로그래밍)>)([globstar](https://www.linuxjournal.com/content/globstar-new-bash-globbing-option) 포함)을 지원합니다. 맞춤법 검사에서 URL을 제외하고 싶다면 다음을 추가하세요.
 
