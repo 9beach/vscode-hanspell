@@ -64,7 +64,7 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
 
 이제 `톨스또이`, `톨스토이가` 등 `톨스또이`로 시작하는 것은 맞춤법 오류에서 제외합니다. 반면 `이딸리아`는 제외하지만 `이딸리아에서`는 오류로 간주합니다.
 
-`.hanspell-ignore`는 [글로브 패턴](<https://ko.wikipedia.org/wiki/글로브_(프로그래밍)>)([globstar](https://www.linuxjournal.com/content/globstar-new-bash-globbing-option) 포함)을 지원합니다. 맞춤법 검사에서 URL을 제외하고 싶다면 다음을 추가하세요.
+`.hanspell-ignore`는 [글로브 패턴](https://man7.org/linux/man-pages/man7/glob.7.html)([globstar](https://www.linuxjournal.com/content/globstar-new-bash-globbing-option) 포함)을 지원합니다. 맞춤법 검사에서 URL을 제외하고 싶다면 다음을 추가하세요.
 
 ```txt
 *http*/**
@@ -95,7 +95,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 [정규 표현식](https://ko.wikipedia.org/wiki/%EC%A0%95%EA%B7%9C_%ED%91%9C%ED%98%84%EC%8B%9D)에 익숙하지 않은 사용자는 이 섹션을 건너뛰세요.
 
-“님에게”는 두음법칙에 의해 “임에게”가 올바릅니다. 이것 때문에 “선생님에게”도 “선생임에게”로 고치는 우를 피하려면 단어 단위로 검색해야 합니다. (물론 한국어는 문맥 의존성이 커서 이것으로도 부족합니다.) 그래서 내부적으로 “님에게”로 검색하지 않고 [“Lookahead and Lookbehind Zero-Length Assertions”](https://www.regular-expressions.info/lookaround.html)를 덧붙여서 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 이런 이유로 **사용자 정의 맞춤법**을 특정 단어를 포함한 표현 일반에 적용하기가 어렵습니다.
+두음법칙에 의해 “님에게”가 아니라 “임에게”가 올바릅니다. 이것 때문에 “선생님에게”도 “선생임에게”로 고치는 우를 피하려면 단어 단위로 검색해야 합니다. (물론 한국어는 문맥 의존성이 커서 이것으로도 부족합니다.) 그래서 내부적으로 “님에게”로 검색하지 않고 [“Lookahead and Lookbehind Zero-Length Assertions”](https://www.regular-expressions.info/lookaround.html)를 덧붙여서 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 이런 이유로 **사용자 정의 맞춤법**을 특정 단어를 포함한 표현 일반에 적용하기가 어렵습니다.
 
 정규 표현식을 지원하는 `~/.hanspell-bad-expressions.json`은 이 문제를 어느 정도 해결할 수 있습니다.
 
@@ -115,7 +115,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
       "severity": "Warning"
     },
     {
-      "expression": "[^ .,]+[을를] +[^.,]+[을를]((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)",
+      "expression": "[^ .,]+[을를] +[^.,]+[을를] ",
       "info": "한 문장에 ‘-을(를)’이 두 번 이상 나옵니다.",
       "severity": "Information"
     },
