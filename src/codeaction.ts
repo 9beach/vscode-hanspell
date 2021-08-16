@@ -38,8 +38,14 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
       );
     });
 
+    if (!actions.length) {
+      return actions;
+    }
+
     if (
-      hanspellDiagnostics.some((diagnostic) => diagnostic.typo.common === true)
+      hanspellDiagnostics.some(
+        (diagnostic) => diagnostic.typo.isCommon === true,
+      )
     ) {
       const action = new vscode.CodeAction(
         '다음, 부산대 공통 오류만 모두 교정',
@@ -77,7 +83,7 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
   ): vscode.CodeAction[] {
     const actions: vscode.CodeAction[] = [];
 
-    diagnostic.typo.suggestions.forEach((suggestion: string) => {
+    diagnostic.suggestions.forEach((suggestion: string) => {
       const action = new vscode.CodeAction(
         `⤷ ${suggestion}`,
         vscode.CodeActionKind.QuickFix,
@@ -89,7 +95,7 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
           {
             document,
             suggestion,
-            token: diagnostic.typo.token,
+            token: diagnostic.token,
             range: diagnostic.range,
           },
         ],

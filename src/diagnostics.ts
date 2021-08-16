@@ -47,12 +47,18 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
 
     for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
       const line = doc.lineAt(lineIndex).text;
-      while (typo.regex.exec(line)) {
+      let matched: RegExpExecArray | null;
+      while ((matched = typo.regex.exec(line))) {
         diagnostics.push(
           new HanspellDiagnostic(
-            lineIndex,
-            typo.regex.lastIndex - typo.token.length,
+            new vscode.Range(
+              lineIndex,
+              typo.regex.lastIndex - matched[0].length,
+              lineIndex,
+              typo.regex.lastIndex,
+            ),
             typo,
+            matched,
           ),
         );
       }
@@ -62,28 +68,59 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
   hanspellDiagnostics.set(doc.uri, diagnostics);
 }
 
+const regexpvars = [
+  /\$0\b/g,
+  /\$1\b/g,
+  /\$2\b/g,
+  /\$3\b/g,
+  /\$4\b/g,
+  /\$5\b/g,
+  /\$6\b/g,
+  /\$7\b/g,
+  /\$8\b/g,
+  /\$9\b/g,
+];
+
 /** Diagnostic data structure containing a typo for a range of a document. */
 export class HanspellDiagnostic extends vscode.Diagnostic {
   typo: HanspellTypo;
+  suggestions: string[];
+  token: string;
 
-  constructor(lineIndex: number, column: number, typo: HanspellTypo) {
-    const range = new vscode.Range(
-      lineIndex,
-      column,
-      lineIndex,
-      column + typo.token.length,
-    );
-
+  constructor(
+    range: vscode.Range,
+    typo: HanspellTypo,
+    matched: RegExpExecArray,
+  ) {
     super(
       range,
       typo.info,
-      typo.common !== false
+      typo.severity !== undefined
+        ? typo.severity
+        : typo.isCommon !== false
         ? vscode.DiagnosticSeverity.Warning
         : vscode.DiagnosticSeverity.Information,
     );
 
     this.typo = typo;
     this.code = HANSPELL_MENTION;
+
+    // If the typo from `~/.hanspell-bad-expressions.json`.
+    if (!typo.token) {
+      this.token = matched[0];
+      this.suggestions = [];
+      typo.suggestions.forEach((s) => {
+        matched.forEach((m, i) => {
+          if (i < 10) {
+            s = s.replace(regexpvars[i], m);
+          }
+        });
+        this.suggestions.push(s);
+      });
+    } else {
+      this.token = typo.token;
+      this.suggestions = typo.suggestions;
+    }
   }
 }
 

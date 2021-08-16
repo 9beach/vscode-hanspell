@@ -9,6 +9,7 @@ import { SpellCheckService } from './service';
 import { uniq } from './uniq';
 import { HanspellIgnore } from './ignore';
 import { HanspellTypoDB } from './typo-db';
+import { HanspellBadExpressions } from './bad-expressions';
 
 /** Class for dictionary of `vscode.TextDocument` to `HanspellTypo[]`. */
 export class DocumentsToTypos {
@@ -25,7 +26,7 @@ export class DocumentsToTypos {
 }
 
 /**
- * Spell checks the given document, makes `HanspellTypo[]`, and set them to
+ * Spell checks given document, makes `HanspellTypo[]`, and sets them to
  * `DocumentsToTypos`.
  */
 export function spellCheck(
@@ -70,7 +71,9 @@ export function spellCheck(
       typos = ignore.empty()
         ? typos
         : typos.filter((typo) => !ignore.match(typo.token));
-      typos = uniq(HanspellTypoDB.getTypos().concat(typos), service);
+      typos = HanspellBadExpressions.getTypos().concat(
+        uniq(HanspellTypoDB.getTypos().concat(typos), service),
+      );
 
       DocumentsToTypos.setTypos(doc, typos);
 

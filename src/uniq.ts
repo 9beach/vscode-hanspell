@@ -9,8 +9,8 @@ function areFromDifferentServices(a: HanspellTypo, b: HanspellTypo) {
   return (
     (a.type !== undefined && b.type === undefined) ||
     (a.type === undefined && b.type !== undefined) ||
-    a.local === true ||
-    b.local === true
+    a.isLocal === true ||
+    b.isLocal === true
   );
 }
 
@@ -20,7 +20,7 @@ const longerThan = (a: HanspellTypo, b: HanspellTypo): boolean =>
 
 /**
  * Removes same or nearly same tokens from the typos array, and sets
- * `HanspellTypo.common` and `HanspellTypo.regex`.
+ * `HanspellTypo.isCommon` and `HanspellTypo.regex`.
  */
 export function uniq(
   typos: HanspellTypo[],
@@ -41,7 +41,7 @@ export function uniq(
     longerThan(b, a) ? -1 : longerThan(a, b) ? 1 : 0,
   );
 
-  // Sets `typo.common` and `isUniq[i]` for each element of sorted array.
+  // Sets `typo.isCommon` and `isUniq[i]` for each element of sorted array.
   sorted.forEach((shortTypo, i) => {
     if (!isUniq[i]) {
       return;
@@ -58,13 +58,13 @@ export function uniq(
     }
 
     if (service === SpellCheckService.all) {
-      if (shortTypo.local === true) {
-        shortTypo.common = true;
+      if (shortTypo.isLocal === true) {
+        shortTypo.isCommon = true;
       } else {
-        shortTypo.common = false;
+        shortTypo.isCommon = false;
       }
     } else {
-      shortTypo.common = undefined;
+      shortTypo.isCommon = undefined;
     }
 
     // Checks if a long token (sorted[j].token) has no additional letters.
@@ -80,7 +80,7 @@ export function uniq(
           service === SpellCheckService.all &&
           areFromDifferentServices(shortTypo, sorted[j])
         ) {
-          shortTypo.common = true;
+          shortTypo.isCommon = true;
         }
       }
     }

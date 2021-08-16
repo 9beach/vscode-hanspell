@@ -99,10 +99,11 @@ function fixAllTypos(args: { document: vscode.TextDocument }) {
   const hist = new HanspellHistory();
 
   getHanspellDiagnostics(args.document).forEach((diagnostic) => {
-    edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);
-    hist.write(
-      `${diagnostic.typo.token} -> ${diagnostic.typo.suggestions[0]}\n`,
-    );
+    if (!diagnostic.suggestions.length) {
+      return;
+    }
+    edit.replace(uri, diagnostic.range, diagnostic.suggestions[0]);
+    hist.write(`${diagnostic.token} -> ${diagnostic.suggestions[0]}\n`);
   });
 
   vscode.workspace.applyEdit(edit);
@@ -120,13 +121,11 @@ function fixCommonTypos(args: { document: vscode.TextDocument }) {
   const hist = new HanspellHistory();
 
   getHanspellDiagnostics(args.document).forEach((diagnostic) => {
-    if (!diagnostic.typo.common) {
+    if (!diagnostic.suggestions.length || !diagnostic.typo.isCommon) {
       return;
     }
-    edit.replace(uri, diagnostic.range, diagnostic.typo.suggestions[0]);
-    hist.write(
-      `${diagnostic.typo.token} -> ${diagnostic.typo.suggestions[0]}\n`,
-    );
+    edit.replace(uri, diagnostic.range, diagnostic.suggestions[0]);
+    hist.write(`${diagnostic.token} -> ${diagnostic.suggestions[0]}\n`);
   });
 
   vscode.workspace.applyEdit(edit);

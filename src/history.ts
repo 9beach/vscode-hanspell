@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 
-/** Defines `HanspellHistory` class providing log writing. */
+/** `HanspellHistory` class providing log writing. */
 export class HanspellHistory {
   constructor() {
     this.stream = fs.createWriteStream(HanspellHistory.path, {

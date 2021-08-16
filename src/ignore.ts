@@ -4,8 +4,8 @@ import * as fs from 'fs';
 import { Minimatch } from 'minimatch';
 
 /**
- * Defines `HanspellIgnore` class which matches typo tokens with glob patterns
- * in `.hanspell-ignore` for avoiding from spell check.
+ * `HanspellIgnore` class having glob patterns to match typo tokens. If a token
+ * is matched to a glob pattern, it's ignored.
  */
 export class HanspellIgnore {
   constructor() {
@@ -27,7 +27,7 @@ export class HanspellIgnore {
     process.env.HOME || process.env.USERPROFILE
   }/.hanspell-ignore`;
 
-  /** Glob patterns in `.hanspell-ignore` for avoiding from spell check. */
+  /** Glob patterns in `.hanspell-ignore`. */
   private static readonly emptyMatches = new Minimatch('');
   private static matches = HanspellIgnore.emptyMatches;
 

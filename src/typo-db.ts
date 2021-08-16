@@ -31,7 +31,7 @@ export class HanspellTypoDB {
             token: lr[0],
             suggestions: [lr[1]],
             info: '사용자 맞춤법 정의',
-            local: true,
+            isLocal: true,
           };
         });
     } catch (err) {
