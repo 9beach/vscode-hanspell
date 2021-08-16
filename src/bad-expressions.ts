@@ -49,17 +49,21 @@ export class HanspellBadExpressions {
       HanspellBadExpressions.typos = JSON.parse(
         fs.readFileSync(HanspellBadExpressions.path, 'utf8'),
       )['bad-expressions'].map((bad: BadExpression) => {
+        if (bad.expression === undefined) {
+          throw new Error('No "expression" in JSON');
+        }
         return {
           token: '',
           suggestions: bad.suggestions ? bad.suggestions : [],
           severity: toDiagnosticSeverity(bad.severity),
           regex: new RegExp(bad.expression, 'g'),
           info: bad.info ? bad.info : '사용자 정의 표현식',
-          isExpression: true,
         };
       });
     } catch (err) {
-      console.log(err.message);
+      vscode.window.showInformationMessage(
+        `~/.hanspell-bad-expressions.json 오류: ${err.message}`,
+      );
 
       HanspellBadExpressions.typos = [];
     }

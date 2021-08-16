@@ -20,6 +20,4 @@ export type HanspellTypo = {
   isCommon?: boolean;
   // Checks if the typo is from `~/.hanspell-typos`.
   isLocal?: boolean;
-  // Checks if the typo is from `~/.hanspell-bad-expressions.json`.
-  isExpression?: boolean;
 };

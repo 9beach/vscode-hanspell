@@ -95,9 +95,9 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 [정규 표현식](https://ko.wikipedia.org/wiki/%EC%A0%95%EA%B7%9C_%ED%91%9C%ED%98%84%EC%8B%9D)에 익숙하지 않은 사용자는 이 섹션을 건너뛰세요.
 
-“님이여”는 두음법칙에 의해 “임이여”가 올바릅니다. 이것을 고치려고 “임금님이여”도 “임금임이여”로 고치는 우를 피하려면 단어 단위로 검색해야 합니다. (물론 한국어는 콘텍스트에 많이 의존해서 이것으로도 부족합니다.) 그래서 내부적으로 “님이여”로 검색하지 않고 정규 표현식의 [Lookahead and Lookbehind Zero-Length Assertions](https://www.regular-expressions.info/lookaround.html)를 이용해서 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님이여((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 이런 이유로 특정 단어를 포함한 표현 일반에 **사용자 정의 맞춤법**을 적용하기가 어렵습니다.
+“님이여”는 두음법칙에 의해 “임이여”가 올바릅니다. 이것 때문에 “임금님이여”도 “임금임이여”로 고치는 우를 피하려면 단어 단위로 검색해야 합니다. (물론 한국어는 문맥 의존성이 커서 이것으로도 부족합니다.) 그래서 내부적으로 “님이여”로 검색하지 않고 정규 표현식의 [Lookahead and Lookbehind Zero-Length Assertions](https://www.regular-expressions.info/lookaround.html)를 이용해서 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님이여((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 이런 이유로 특정 단어를 포함한 표현 일반에 **사용자 정의 맞춤법**을 적용하기가 어렵습니다.
 
-이것의 해결책으로 `~/.hanspell-bad-expressions.json`은 정규 표현식을 지원합니다.
+정규 표현식을 지원하는 `~/.hanspell-bad-expressions.json`은 이 문제를 해결할 수 있습니다.
 
 ```json
 {
@@ -116,14 +116,13 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
     },
     {
       "expression": "[^ .,]+[을를] +[^.,]+[을를]((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)",
-      "info": "한 문장에서 ‘-을(를)’이 두 번 이상 나옵니다.",
+      "info": "한 문장에 ‘-을(를)’이 두 번 이상 나옵니다.",
       "severity": "Information"
     },
     {
       "expression": "많은 +([^.,]+) +있습니다",
       "info": "간명하지 않은 표현입니다.",
-      "suggestions": ["$1 많습니다"],
-      "severity": "Information"
+      "suggestions": ["$1 많습니다"]
     }
   ]
 }
@@ -133,11 +132,11 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 두 번째 표현식은 “우리의 사랑의”와 같은 표현을 “우리 사랑의”로 고치도록 정의합니다.
 
-세 번째 표현식은 마침표가 나오기 전에 ‘-을(를)’이 두 번 이상 나오면 알리도록 정의합니다.
+세 번째 표현식은 마침표나 쉼표가 나오기 전에 ‘-을(를)’이 두 번 이상 나오면 알리도록 정의합니다.
 
 네 번째 표현식은 “많은 한계가 있습니다”와 같은 표현을 “한계가 많습니다”로 고치도록 정의합니다.
 
-`expression`은 반드시 정의해야 합니다. 나머지는 없어도 무방합니다. `severity`는 `Error`, `Warning`, `Information` 중에 하나를 고르세요.
+`~/.hanspell-bad-expressions.json`에 `info`, `suggestions`, `severity`는 정의하지 않아도 되지만 `expression`은 반드시 정의해야 합니다. `severity`는 `Error`, `Warning`, `Information` 중에 하나를 고르세요.
 
 [형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C)를 분석하지 않고 정규 표현식에 의존하는 것은 한계가 많습니다. “세계의 불가사의”는 문제없는 표현이지만 위의 설정으로는 ‘-의’를 겹쳐 썼다고 분석합니다. 주의해서 사용하시기 바랍니다.
 
