@@ -74,7 +74,7 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
 
 ### 사용자 정의 맞춤법
 
-`~/.hanspell-typos` 파일에 아래와 같이 사용자가 직접 맞춤법을 정의해서 표기법을 통일하고 더 나은 표현을 제시할 수 있습니다.
+`~/.hanspell-typos` 파일에 아래와 같이 사용자가 직접 맞춤법을 정의할 수 있습니다.
 
 ```txt
 제임슨 -> 제머슨
