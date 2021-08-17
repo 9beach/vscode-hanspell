@@ -18,7 +18,7 @@ _이 문서의 최신 버전은 [깃허브](https://github.com/9beach/vscode-han
 
 ![commands](https://github.com/9beach/vscode-hanspell/raw/HEAD/images/hanspell-commands.png)
 
-명령 팔레트의 오른쪽, 톱니바퀴 아이콘을 클릭해서 핫키를 지정합니다. 맞춤법 검사는 자동으로 실행되지 않아서 핫키가 편합니다.
+명령 팔레트의 오른쪽, 톱니바퀴 아이콘을 클릭해서 핫키를 지정합니다. 맞춤법 검사는 자동으로 실행되지 않아서 핫키를 추천합니다.
 
 마우스로 드래그해서 문서의 특정 영역을 선택한 상태라면 해당 영역만 검사합니다. 유용하지만 주의가 필요합니다.
 
