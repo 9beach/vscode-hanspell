@@ -1,5 +1,7 @@
 # 비주얼 스튜디오 코드 한스펠
 
+_[깃허브](https://github.com/9beach/vscode-hanspell)에서 이 문서의 [최신 버전](https://github.com/9beach/vscode-hanspell/blob/main/README.md)을 확인하세요._
+
 [비주얼 스튜디오 코드 한스펠](https://github.com/9beach/vscode-hanspell)(vscode-hanspell)은, (주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스로 한글 맞춤법을 검사하는 [비주얼 스튜디오 코드](https://code.visualstudio.com)용 [익스텐션](https://code.visualstudio.com/docs/editor/extension-marketplace)입니다.
 
 터미널과 커맨드 라인 팬이라면 [hanspell](https://github.com/9beach/hanspell)을 추천합니다.
@@ -16,7 +18,7 @@
 
 ![commands](https://github.com/9beach/vscode-hanspell/raw/HEAD/images/hanspell-commands.png)
 
-명령 팔레트의 오른쪽, 톱니바퀴 아이콘을 클릭해서 핫키를 지정합니다. 맞춤법 검사는 자동으로 실행되지 않으니 핫키 지정을 권합니다.
+명령 팔레트의 오른쪽, 톱니바퀴 아이콘을 클릭해서 핫키를 지정합니다. 맞춤법 검사는 자동으로 실행되지 않아서 핫키가 편합니다.
 
 마우스로 드래그해서 문서의 특정 영역을 선택한 상태라면 해당 영역만 검사합니다. 유용하지만 주의가 필요합니다.
 
@@ -26,9 +28,9 @@
 
 ![command actions](https://github.com/9beach/vscode-hanspell/raw/HEAD/images/hanspell-command-actions.png)
 
-`Shift+Alt+.`(macOS `⌥⌘.`) 키를 누르면 메뉴를 띄우지 않고 자동으로 교정합니다. 다시 `F8` 키를 누르면 그다음 오류로 이동합니다.
+`Shift+Alt+.`(macOS `⌥⌘.`) 키를 누르면 메뉴를 생략하고 바로 교정합니다. 다시 `F8` 키를 누르면 그다음 오류로 이동합니다.
 
-`맞춤법 검사 (다음, 부산대)` 커맨드는 두 서비스가 공통으로 발견한 오류와 한 서비스만 발견한 오류를, 각각 오렌지색(Warning)과 파란색(Information)으로 구분해서 표시합니다. 다른 두 커맨드는 모두 오렌지색으로 표시합니다.
+`맞춤법 검사 (다음, 부산대)` 커맨드는 두 서비스가 공통으로 발견한 오류와 한 서비스만 발견한 오류를, 각각 오렌지색(Warning)과 파란색(Information)으로 구분합니다. 다른 두 커맨드는 모두 오렌지색으로 표시합니다.
 
 ### 맞춤법 오류 정보
 
@@ -72,7 +74,7 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
 
 ### 사용자 정의 맞춤법
 
-`~/.hanspell-typos` 파일에 아래와 같이 사용자가 직접 맞춤법을 정의해서 표기법을 통일하고 더 나은 표현을 제시하는데 이용할 수 있습니다.
+`~/.hanspell-typos` 파일에 아래와 같이 사용자가 직접 맞춤법을 정의해서 표기법을 통일하고 더 나은 표현을 제시할 수 있습니다.
 
 ```txt
 제임슨 -> 제머슨
@@ -81,7 +83,7 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
 감사합니다 -> 고맙습니다
 ```
 
-이 기능의 특징은 문서 작성 과정에서 자동으로 분석해준다는 점입니다. 새로 검사하기 전에는 최근 결과로 계속 분석하기 때문에 같은 실수를 반복하면 새로 맞춤법 검사를 실행하지 않아도 자동으로 밑줄을 표시합니다. 이처럼 사용자 정의 맞춤법도 최근 검사에서 발견된 오류처럼 작동합니다. 그래서 한 번 검사한 뒤에는 자동으로 분석합니다.
+문서 작성 과정에서 자동으로 분석해준다는 점은 이 기능의 가장 큰 특징입니다. 새로 검사하기 전에는 최근 결과로 계속 분석하기 때문에 같은 실수를 반복하면 새로 맞춤법 검사를 실행하지 않아도 자동으로 밑줄이 표시됩니다. 이처럼 사용자 정의 맞춤법도 최근 검사에서 발견된 오류처럼 기능합니다.
 
 아래는 자주 틀리는 맞춤법 20개로 `~/.hanspell-typos` 파일을 만드는 셸 스크립트입니다.
 
@@ -95,9 +97,9 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 [정규 표현식](https://ko.wikipedia.org/wiki/%EC%A0%95%EA%B7%9C_%ED%91%9C%ED%98%84%EC%8B%9D)에 익숙하지 않은 사용자는 이 섹션을 건너뛰세요.
 
-두음법칙에 의해 “님에게”가 아니라 “임에게”가 올바릅니다. 이것 때문에 “선생님에게”도 “선생임에게”로 고치는 우를 피하려면 단어 단위로 검색해야 합니다. (물론 한국어는 문맥 의존성이 커서 이것으로도 부족합니다.) 그래서 내부적으로 “님에게”로 검색하지 않고 [“Lookahead and Lookbehind Zero-Length Assertions”](https://www.regular-expressions.info/lookaround.html)를 덧붙여서 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 이런 이유로 원하는 단어가 포함된 다양한 표현을 **사용자 정의 맞춤법**으로 분석하기는 어렵습니다.
+두음법칙에 의해 “님에게”가 아니라 “임에게”가 올바릅니다. 이것 때문에 “선생님에게”도 “선생임에게”로 고치는 우를 피하려면 단어 단위로 검색해야 합니다. (물론 한국어는 문맥 의존성이 커서 이것으로도 부족합니다.) 그래서 내부적으로는 “님에게”로 검색하지 않고 [“Lookahead and Lookbehind Zero-Length Assertions”](https://www.regular-expressions.info/lookaround.html)를 덧붙여서 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 이런 이유로 원하는 단어가 포함된 다양한 표현을 **사용자 정의 맞춤법**으로 분석하기는 어렵습니다.
 
-정규 표현식을 지원하는 `~/.hanspell-bad-expressions.json`은 이 문제를 어느 정도 해결합니다.
+`~/.hanspell-bad-expressions.json`에 사용자가 직접 정규 표현식을 작성해서 이 문제를 어느 정도 해결할 수 있습니다. 다음 예를 봅시다.
 
 ```json
 {
@@ -136,9 +138,9 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 네 번째 표현식은 “많은 한계가 있습니다”와 같은 표현을 “한계가 많습니다”로 고치도록 설정합니다.
 
-`.hanspell-bad-expressions.json`에 `info`, `suggestions`, `severity`는 정의하지 않아도 되지만 `expression`은 정의해야 합니다. `severity`는 심각도에 따라 `Error`, `Warning`, `Information` 중 하나를 지정하세요.
-
 [형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C)를 분석하지 않고 정규 표현식에 의존하는 것은 한계가 많습니다. “세계의 불가사의”는 문제없는 표현이지만 위의 설정으로는 ‘-의’를 겹쳐 썼다고 분석합니다. 주의해서 사용하시기 바랍니다.
+
+`.hanspell-bad-expressions.json`에 `info`, `suggestions`, `severity`는 정의하지 않아도 되지만 `expression`은 정의해야 합니다. `severity`는 심각도에 따라 `Error`, `Warning`, `Information` 중 하나를 지정하세요.
 
 ## 알려진 문제점
 
