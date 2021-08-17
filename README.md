@@ -1,6 +1,6 @@
 # 비주얼 스튜디오 코드 한스펠
 
-_[깃허브](https://github.com/9beach/vscode-hanspell)에서 이 문서의 [최신 버전](https://github.com/9beach/vscode-hanspell/blob/main/README.md)을 확인하세요._
+_이 문서의 최신 버전은 [깃허브](https://github.com/9beach/vscode-hanspell/blob/main/README.md)에 있습니다._
 
 [비주얼 스튜디오 코드 한스펠](https://github.com/9beach/vscode-hanspell)(vscode-hanspell)은, (주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스로 한글 맞춤법을 검사하는 [비주얼 스튜디오 코드](https://code.visualstudio.com)용 [익스텐션](https://code.visualstudio.com/docs/editor/extension-marketplace)입니다.
 
@@ -8,7 +8,7 @@ _[깃허브](https://github.com/9beach/vscode-hanspell)에서 이 문서의 [최
 
 ## 설치
 
-[비주얼 스튜디오 코드 마켓 플레이스](https://marketplace.visualstudio.com/items?itemName=9beach.vscode-hanspell) 또는 비주얼 스튜디오 코드 익스텐션 탭에서 '한스펠'로 검색해서 설치합니다.
+[비주얼 스튜디오 코드 마켓 플레이스](https://marketplace.visualstudio.com/items?itemName=9beach.vscode-hanspell) 또는 비주얼 스튜디오 코드 익스텐션 탭에서 “한스펠”로 검색해서 설치합니다.
 
 ## 주요 기능 및 사용법
 
@@ -138,7 +138,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 네 번째 표현식은 “많은 한계가 있습니다”와 같은 표현을 “한계가 많습니다”로 고치도록 설정합니다.
 
-[형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C)를 분석하지 않고 정규 표현식에 의존하는 것은 한계가 많습니다. “세계의 불가사의”는 문제없는 표현이지만 위의 설정으로는 ‘-의’를 겹쳐 썼다고 분석합니다. 주의해서 사용하시기 바랍니다.
+[형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C)를 분석하지 않고 정규 표현식에 의존하는 것은 한계가 분명합니다. “세계의 불가사의”는 문제없는 표현이지만 위의 설정으로는 ‘-의’를 겹쳐 썼다고 분석합니다. 주의해서 사용하시기 바랍니다.
 
 `.hanspell-bad-expressions.json`에 `info`, `suggestions`, `severity`는 정의하지 않아도 되지만 `expression`은 정의해야 합니다. `severity`는 심각도에 따라 `Error`, `Warning`, `Information` 중 하나를 지정하세요.
 
