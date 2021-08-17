@@ -66,7 +66,7 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
 
 이제 `톨스또이`, `톨스토이가` 등 `톨스또이`로 시작하는 문자열은 맞춤법 오류에서 제외합니다. 반면 `이딸리아`는 제외하지만 `이딸리아에서`는 오류로 간주합니다.
 
-`.hanspell-ignore`는 [globstar](https://www.linuxjournal.com/content/globstar-new-bash-globbing-option)를 포함한 [글로브 패턴](https://man7.org/linux/man-pages/man7/glob.7.html)을 지원합니다. 맞춤법 검사에서 URL을 제외하고 싶다면 다음을 추가하세요.
+`.hanspell-ignore`는 [globstar](https://www.linuxjournal.com/content/globstar-new-bash-globbing-option)를 포함한 [글로브 패턴](https://man7.org/linux/man-pages/man7/glob.7.html)을 지원합니다. 맞춤법 오류에서 URL을 제외하고 싶다면 다음을 추가하세요.
 
 ```txt
 *http*/**
@@ -117,8 +117,8 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
       "severity": "Warning"
     },
     {
-      "expression": "[가-힣]+이 +[^.,\"“”]+[가-힣]이((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)",
-      "info": "한 문장에 ‘-이’가 두 번 이상 나옵니다."
+      "expression": "[가-힣]+[을를] +[^.,\"“”]+[가-힣][을를]((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)",
+      "info": "한 문장에 ‘-을(를)’이 두 번 이상 나옵니다."
     }
   ]
 }
@@ -128,7 +128,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 두 번째 표현식은 “우리의 사랑의”처럼 ‘-의’를 겹쳐 쓴 표현을 “우리 사랑의”로 고치도록 설정합니다.
 
-세 번째 표현식은 “그 사람이 범인이 아니다”처럼 마침표나 쉼표가 나오기 전에 ‘-이’가 두 번 이상 나오면 밑줄을 긋도록 설정합니다.
+세 번째 표현식은 “그 사람을 한때 사랑을 했다”처럼 마침표나 쉼표가 나오기 전에 ‘-을(를)’이 두 번 이상 나오면 밑줄을 긋도록 설정합니다.
 
 [형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C)를 분석하지 않고 정규 표현식에 의존하는 것은 한계가 분명합니다. “세계의 불가사의”는 문제없는 표현이지만 위의 설정으로는 ‘-의’를 겹쳐 썼다고 분석됩니다. 주의해서 사용하시기 바랍니다.
 
