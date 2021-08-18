@@ -28,7 +28,7 @@ _이 문서의 최신 버전은 [깃허브](https://github.com/9beach/vscode-han
 
 ![command actions](https://github.com/9beach/vscode-hanspell/raw/HEAD/images/hanspell-command-actions.png)
 
-`Shift+Alt+.`(macOS `⌥⌘.`) 키를 누르면 메뉴를 생략하고 바로 교정합니다. 다시 `F8` 키를 누르면 그다음 오류로 이동합니다.
+`Shift+Alt+.`(macOS `⌥⌘.`) 키를 누르면 메뉴는 생략하고 바로 교정합니다. 다시 `F8` 키를 누르면 그다음 오류로 이동합니다.
 
 `맞춤법 검사 (다음, 부산대)` 커맨드는 두 서비스가 공통으로 발견한 오류와 한 서비스만 발견한 오류를, 각각 오렌지색(Warning)과 파란색(Information)으로 구분합니다. 다른 두 커맨드는 모두 오렌지색으로 표시합니다.
 
