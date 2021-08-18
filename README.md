@@ -137,7 +137,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 네 번째 표현식은 “하게 되었습니다”, “알려져 있다”, “보여 주고” 등과 같이 군더더기 있는 표현에 밑줄을 긋도록 설정합니다.
 
-[형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C)를 분석하지 않고 정규 표현식에 의존하는 것은 한계가 분명합니다. “세계의 불가사의”는 문제없는 표현이지만 위의 설정으로는 ‘-의’를 겹쳐 썼다고 분석됩니다. 주의해서 사용하시기 바랍니다.
+[형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C)를 분석하지 않고 정규 표현식에 의존하는 것은 한계가 분명합니다. “세계의 불가사의”는 문제없는 표현이지만 위의 설정은 ‘-의’를 겹쳐 썼다고 분석합니다. 주의해서 사용하시기 바랍니다.
 
 `.hanspell-bad-expressions.json`에 `info`, `suggestions`, `severity`는 정의하지 않아도 되지만 `expression`은 정의해야 합니다. `severity`는 심각도에 따라 `Error`, `Warning`, `Information` 중 하나를 지정하세요.
 
