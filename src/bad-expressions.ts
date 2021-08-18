@@ -61,9 +61,12 @@ export class HanspellBadExpressions {
         };
       });
     } catch (err) {
-      vscode.window.showInformationMessage(
-        `~/.hanspell-bad-expressions.json 오류: ${err.message}`,
-      );
+      // If JSON error.
+      if (err.message.indexOf('ENOENT') !== 0) {
+        vscode.window.showInformationMessage(
+          `~/.hanspell-bad-expressions.json 오류: ${err.message}`,
+        );
+      }
 
       HanspellBadExpressions.typos = [];
     }

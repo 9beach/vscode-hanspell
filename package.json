@@ -2,7 +2,7 @@
   "name": "vscode-hanspell",
   "displayName": "vscode-hanspell",
   "description": "(주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스를 이용한 한글 맞춤법 검사기.",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "icon": "images/hanspell.png",
   "publisher": "9beach",
   "engines": {
