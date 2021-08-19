@@ -1,6 +1,6 @@
 # 비주얼 스튜디오 코드 한스펠
 
-_이 문서의 최신 버전은 [깃허브](https://github.com/9beach/vscode-hanspell/blob/main/README.md)에서 확인하세요._
+_[깃허브](https://github.com/9beach/vscode-hanspell/blob/main/README.md)에서 이 문서의 최신 버전을 확인하세요._
 
 [비주얼 스튜디오 코드 한스펠](https://github.com/9beach/vscode-hanspell)(vscode-hanspell)은, (주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스로 한글 맞춤법을 검사하는 [비주얼 스튜디오 코드](https://code.visualstudio.com)용 [익스텐션](https://code.visualstudio.com/docs/editor/extension-marketplace)입니다.
 
@@ -144,9 +144,9 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 네 번째 표현식은 “알려 줍니다”, “울게 되었다” 등 군더더기 있는 표현에 밑줄을 긋도록 설정합니다.
 
-[“사용자 정의 표현식” 예시](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a)에 유용한 표현식이 계속 추가됩니다. 참고하세요.
+[“사용자 정의 표현식” 예시](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a)에 유용한 사례가 계속 추가됩니다. 참고하시고 제안 댓글도 부탁드립니다.
 
-[형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C) 분석 없이 정규 표현식에 의존하면 한계가 분명합니다. “세계의 불가사의”는 문제없는 표현이지만 위의 설정에서는 ‘-의’를 겹쳐 썼다고 분석합니다. 주의해서 사용하시기 바랍니다.
+[형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C) 분석 없이 정규 표현식에 의존하는 것은 한계가 분명합니다. “세계의 불가사의”는 문제없는 표현이지만 위의 설정에서는 ‘-의’를 겹쳐 썼다고 분석합니다. 주의해서 사용하시기 바랍니다.
 
 `.hanspell-bad-expressions.json`에 `info`, `suggestions`, `severity`는 정의하지 않아도 되지만 `expression`은 정의해야 합니다. `severity`는 심각도에 따라 `Error`, `Warning`, `Information` 중 하나를 지정하세요.
 
