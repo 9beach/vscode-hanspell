@@ -144,7 +144,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 네 번째 표현식은 “알려 줍니다”, “울게 되었다” 등 군더더기 있는 표현에 밑줄을 긋도록 설정합니다.
 
-[“사용자 정의 표현식” 예시](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a)에 계속 추가되니 참고하세요.
+[“사용자 정의 표현식” 예시](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a)에 유용한 표현식이 계속 추가됩니다. 참고하세요.
 
 [형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C) 분석 없이 정규 표현식에 의존하면 한계가 분명합니다. “세계의 불가사의”는 문제없는 표현이지만 위의 설정에서는 ‘-의’를 겹쳐 썼다고 분석합니다. 주의해서 사용하시기 바랍니다.
 
