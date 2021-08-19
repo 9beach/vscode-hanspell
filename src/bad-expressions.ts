@@ -13,6 +13,7 @@ type BadExpression = {
   suggestions?: string[];
   // Typo info.
   info?: string;
+  // DiagnosticSeverity.
   severity?: string;
 };
 
