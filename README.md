@@ -1,6 +1,6 @@
 # 비주얼 스튜디오 코드 한스펠
 
-_이 문서의 최신 버전은 [깃허브](https://github.com/9beach/vscode-hanspell/blob/main/README.md)에서 찾을 수 있습니다._
+_이 문서의 최신 버전은 [깃허브](https://github.com/9beach/vscode-hanspell/blob/main/README.md)에서 확인하세요._
 
 [비주얼 스튜디오 코드 한스펠](https://github.com/9beach/vscode-hanspell)(vscode-hanspell)은, (주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스로 한글 맞춤법을 검사하는 [비주얼 스튜디오 코드](https://code.visualstudio.com)용 [익스텐션](https://code.visualstudio.com/docs/editor/extension-marketplace)입니다.
 
@@ -96,9 +96,9 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 [정규 표현식](https://ko.wikipedia.org/wiki/%EC%A0%95%EA%B7%9C_%ED%91%9C%ED%98%84%EC%8B%9D)에 익숙하지 않은 사용자는 이 섹션을 건너뛰세요.
 
-두음법칙으로 “님에게”가 아니라 “임에게”가 올바릅니다. 이것을 고치려고 “선생님에게”를 “선생임에게”로 바꾸는 우를 피하려면 단어 단위로 검색해야 합니다. (물론 한국어는 문맥 의존성이 커서 이것으로도 부족합니다.) 그래서 내부적으로는 “님에게”로 검색하지 않고 [“Lookahead and Lookbehind Zero-Length Assertions”](https://www.regular-expressions.info/lookaround.html)를 덧붙여서 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 이런 이유로 원하는 단어가 포함된 다양한 표현을 **사용자 정의 맞춤법**으로 분석하기는 어렵습니다.
+두음법칙으로 “님에게”가 아니라 “임에게”가 올바릅니다. 이것을 고치려고 “선생님에게”를 “선생임에게”로 바꾸는 우를 피하려면 단어 단위로 검색해야 합니다. (물론 한국어는 문맥 의존성이 커서 이것으로도 부족합니다.) 그래서 내부적으로는 “님에게”로 검색하지 않고 [“Lookahead and Lookbehind Zero-Length Assertions”](https://www.regular-expressions.info/lookaround.html)를 덧붙여서 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 이런 이유로 원하는 단어가 포함된 다양한 표현을 “사용자 정의 맞춤법”으로 분석하기는 어렵습니다.
 
-이 문제는 [`~/.hanspell-bad-expressions.json`](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a)에 사용자가 직접 정규 표현식을 작성해서 어느 정도 해결할 수 있습니다. 다음 예를 봅시다.
+이 문제는 `~/.hanspell-bad-expressions.json`에 사용자가 직접 정규 표현식을 작성해서 어느 정도 해결할 수 있습니다. 다음 예를 봅시다.
 
 ```json
 {
@@ -143,6 +143,8 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 세 번째 표현식은 “그 사람을 결국에는 신뢰를 했다”처럼 한 문장에서 ‘-을(를)’이 두 번 이상 나오면 밑줄을 긋도록 설정합니다.
 
 네 번째 표현식은 “알려 줍니다”, “울게 되었다” 등 군더더기 있는 표현에 밑줄을 긋도록 설정합니다.
+
+[“사용자 정의 표현식” 예시](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a)에 계속 추가되니 참고하세요.
 
 [형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C) 분석 없이 정규 표현식에 의존하면 한계가 분명합니다. “세계의 불가사의”는 문제없는 표현이지만 위의 설정에서는 ‘-의’를 겹쳐 썼다고 분석합니다. 주의해서 사용하시기 바랍니다.
 
