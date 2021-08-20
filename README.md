@@ -1,6 +1,6 @@
 # 비주얼 스튜디오 코드 한스펠
 
-_[깃허브](https://github.com/9beach/vscode-hanspell/blob/main/README.md)에서 이 문서의 최신 버전을 확인하세요._
+_이 문서의 [최신 버전](https://github.com/9beach/vscode-hanspell/blob/main/README.md)과 설정 파일의 [자세한 예시](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a)는 깃허브에서 계속 갱신됩니다._
 
 [비주얼 스튜디오 코드 한스펠](https://github.com/9beach/vscode-hanspell)(vscode-hanspell)은, (주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스로 한글 맞춤법을 검사하는 [비주얼 스튜디오 코드](https://code.visualstudio.com)용 [익스텐션](https://code.visualstudio.com/docs/editor/extension-marketplace)입니다.
 
@@ -133,7 +133,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 }
 ```
 
-첫 번째 표현식은 “돈키호테” 좌우에 “Lookahead and Lookbehind”가 없어서 “돈키호테는”, “돈키호테가” 등에 모두 적용됩니다.
+첫 번째 표현식은 “돈키호테 좌우에 “Lookahead and Lookbehind”가 없어서 “돈키호테는”, “돈키호테가” 등에 모두 적용됩니다.
 
 두 번째 표현식은 “우리의 사랑의”처럼 ‘-의’를 겹쳐 쓴 표현을 “우리 사랑의”처럼 고치도록 제안합니다.
 
