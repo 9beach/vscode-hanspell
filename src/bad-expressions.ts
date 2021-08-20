@@ -25,6 +25,8 @@ function toDiagnosticSeverity(severity: string | undefined) {
       return vscode.DiagnosticSeverity.Warning;
     case 'Error':
       return vscode.DiagnosticSeverity.Error;
+    case 'Hint':
+      return vscode.DiagnosticSeverity.Hint;
     default:
       return vscode.DiagnosticSeverity.Information;
   }
