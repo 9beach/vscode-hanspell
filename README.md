@@ -98,7 +98,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 두음법칙으로 “님에게”가 아니라 “임에게”가 올바릅니다. 이것을 고치려다 “선생님에게”를 “선생임에게”로 바꾸는 우를 피하려면 단어 단위로 검색해야 합니다. (물론 한국어는 문맥 의존성이 커서 이것으로도 부족합니다.) 그래서 내부적으로는 “님에게”로 검색하지 않고 [“Lookahead and Lookbehind Zero-Length Assertions”](https://www.regular-expressions.info/lookaround.html)를 덧붙여서 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 이런 이유로 원하는 단어가 포함된 다양한 표현을 “사용자 정의 맞춤법”으로 분석하기는 어렵습니다.
 
-`~/.hanspell-bad-expressions.json`에 사용자가 직접 정규 표현식을 작성해서 문제를 어느 정도 해결할 수 있습니다. 다음 예를 봅시다.
+이 문제는 `~/.hanspell-bad-expressions.json`에 사용자가 직접 정규 표현식을 작성해서 어느 정도 해결할 수 있습니다. 다음 예를 봅시다.
 
 ```json
 {
