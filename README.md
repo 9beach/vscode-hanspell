@@ -131,7 +131,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 }
 ```
 
-첫 번째 표현식은 “돈키호테 좌우에 “Lookahead and Lookbehind”가 없어서 “돈키호테는”, “돈키호테가” 등에 모두 적용됩니다.
+첫 번째 표현식은 “돈키호테” 좌우에 “Lookahead and Lookbehind”가 없어서 “돈키호테는”, “신돈키호테” 등에 모두 적용됩니다.
 
 두 번째 표현식은 “우리의 사랑의”처럼 ‘-의’를 겹쳐 쓴 표현을 “우리 사랑의”처럼 고치도록 제안합니다.
 
