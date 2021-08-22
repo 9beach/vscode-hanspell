@@ -8,7 +8,7 @@ _이 문서의 [최신 버전](https://github.com/9beach/vscode-hanspell/blob/ma
 
 ## 설치
 
-[비주얼 스튜디오 코드 마켓 플레이스](https://marketplace.visualstudio.com/items?itemName=9beach.vscode-hanspell) 또는 비주얼 스튜디오 코드 익스텐션 탭에서 “한스펠”로 검색해서 설치합니다.
+[비주얼 스튜디오 코드 마켓 플레이스](https://marketplace.visualstudio.com/items?itemName=9beach.vscode-hanspell)나 비주얼 스튜디오 코드 익스텐션 탭에서 “한스펠”로 검색해서 설치합니다.
 
 ## 주요 기능 및 사용법
 
@@ -98,7 +98,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 두음법칙으로 “님에게”가 아니라 “임에게”가 올바릅니다. 이것을 고치려다 “선생님에게”를 “선생임에게”로 바꾸는 우를 피하려면 단어 단위로 검색해야 합니다. (물론 한국어는 문맥 의존성이 커서 이것으로도 부족합니다.) 그래서 내부적으로는 “님에게”로 검색하지 않고 [“Lookahead and Lookbehind Zero-Length Assertions”](https://www.regular-expressions.info/lookaround.html)를 덧붙여서 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 이런 이유로 원하는 단어가 포함된 다양한 표현을 “사용자 정의 맞춤법”으로 분석하기는 어렵습니다.
 
-이 문제는 `~/.hanspell-bad-expressions.json`에 사용자가 직접 정규 표현식을 작성해서 어느 정도 해결할 수 있습니다. 다음 예를 봅시다.
+`~/.hanspell-bad-expressions.json`에 사용자가 직접 정규 표현식을 작성해서 문제를 어느 정도 해결할 수 있습니다. 다음 예를 봅시다.
 
 ```json
 {
@@ -121,11 +121,10 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
         "축구공을 가지고 멀리차기 놀이를 -> 축구공(으로) 멀리차기 놀이를",
         "죽게 되고 -> 죽고",
         "알려져 있는 -> 알려진",
-        "알려 줍니다 -> 알립니다",
-        "구속시켰다 -> 구속했다"
+        "알려 줍니다 -> 알립니다"
       ],
       "info": "군더더기 있는 표현입니다.",
-      "expression": "[가-힣’”』」》]+(에 +있는|[을를] +(가[지진질집져졌]|갖는|지[니닌닐닙녀녔])|게 +[되된될됩돼됐]|[져라고아] +있|[혀해여려겨] +[주준줄줍줘줬]|시[키킨킬킵켜켰])[가-힣]*",
+      "expression": "[가-힣’”』」》]+(에 +있는|[을를] +(가[지진질집져졌]|갖는|지[니닌닐닙녀녔])|게 +[되된될됩돼됐]|[져라고아] +있|[혀해여려겨] +[주준줄줍줘줬])[가-힣]*",
       "severity": "Warning"
     }
   ]
