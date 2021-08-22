@@ -1,6 +1,6 @@
 # 비주얼 스튜디오 코드 한스펠
 
-_이 문서의 [최신 버전](https://github.com/9beach/vscode-hanspell/blob/main/README.md)과 설정 파일의 [자세한 예시](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a)는 깃허브에서 계속 갱신됩니다._
+_이 문서의 [깃허브 원본](https://github.com/9beach/vscode-hanspell/blob/main/README.md)과 [설정 예시 지스트](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a)는 계속 갱신됩니다._
 
 [비주얼 스튜디오 코드 한스펠](https://github.com/9beach/vscode-hanspell)(vscode-hanspell)은, (주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스로 한글 맞춤법을 검사하는 [비주얼 스튜디오 코드](https://code.visualstudio.com)용 [익스텐션](https://code.visualstudio.com/docs/editor/extension-marketplace)입니다.
 
@@ -10,7 +10,7 @@ _이 문서의 [최신 버전](https://github.com/9beach/vscode-hanspell/blob/ma
 
 [비주얼 스튜디오 코드 마켓 플레이스](https://marketplace.visualstudio.com/items?itemName=9beach.vscode-hanspell)나 비주얼 스튜디오 코드 익스텐션 탭에서 “한스펠”로 검색해서 설치합니다.
 
-## 주요 기능 및 사용법
+## 주요 기능과 사용법
 
 ### 맞춤법 검사
 
@@ -55,7 +55,7 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
    7 내노라하는 -> 내로라하는
 ```
 
-### 맞춤법 검사 제외 문자열 지정
+### 맞춤법 검사 제외 문자열
 
 `톨스토이`를 `톨스또이`로 쓰되 맞춤법 검사는 피하고 싶다면 홈 디렉터리에 `.hanspell-ignore` 파일을 만들고 `톨스또이*`를 추가하세요.
 
@@ -71,6 +71,8 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
 ```txt
 *http*/**
 ```
+
+[맞춤법 검사 제외 문자열 예시](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a#맞춤법-검사-제외-문자열)에 더 많은 사례가 있습니다.
 
 ### 사용자 정의 맞춤법
 
@@ -141,7 +143,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 `.hanspell-bad-expressions.json`에 `info`, `suggestions`, `severity`는 정의하지 않아도 되지만 `expression`은 정의해야 합니다. `severity`는 심각도에 따라 `Error`, `Warning`, `Information`, `Hint` 중 하나를 지정하세요. `Hint`로 지정하면 짧은 점선으로 표시되어 눈에 띄지 않습니다. 거짓 경보 가능성이 큰 표현식에 적합합니다.
 
-[“사용자 정의 표현식” 예시](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a)에 유용한 사례가 계속 추가됩니다. 글로 표현한 아이디어든 정규 표현식이든 어떤 제안(댓글)도 환영합니다.
+[사용자 정의 표현식 예시](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a#사용자-정의-표현식)에 유용한 사례가 계속 추가됩니다.
 
 ## 알려진 문제점
 
