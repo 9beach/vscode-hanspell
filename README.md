@@ -1,7 +1,5 @@
 # 비주얼 스튜디오 코드 한스펠
 
-_이 문서의 [깃허브 원본](https://github.com/9beach/vscode-hanspell/blob/main/README.md)과 [설정 예시 지스트](https://gist.github.com/9beach/3e11ceafcf9477b0bf9f6512f8a4b55a)는 계속 갱신됩니다._
-
 [비주얼 스튜디오 코드 한스펠](https://github.com/9beach/vscode-hanspell)(vscode-hanspell)은, (주)다음과 부산대학교 인공지능연구실/(주)나라인포테크의 웹 서비스로 한글 맞춤법을 검사하는 [비주얼 스튜디오 코드](https://code.visualstudio.com)용 [익스텐션](https://code.visualstudio.com/docs/editor/extension-marketplace)입니다.
 
 터미널과 커맨드 라인 팬이라면 [hanspell](https://github.com/9beach/hanspell)을 추천합니다.
