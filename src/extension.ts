@@ -5,6 +5,9 @@
 
 import * as vscode from 'vscode';
 
+import { HanspellTypo } from './typo';
+import { DocumentsToTypos } from './spellcheck';
+import { HanspellIgnore } from './ignore';
 import { HanspellHistory } from './history';
 import { HanspellCodeAction } from './codeaction';
 import {
@@ -15,6 +18,7 @@ import {
 import {
   subscribeDiagnosticsToDocumentChanges,
   getHanspellDiagnostics,
+  refreshDiagnostics,
 } from './diagnostics';
 
 /** Called once the extension is activated. */
@@ -37,6 +41,9 @@ export function activate(context: vscode.ExtensionContext) {
   // Binds code action commands to corresponding functions.
   context.subscriptions.push(
     vscode.commands.registerCommand('vscode-hanspell.fixTypo', fixTypo),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand('vscode-hanspell.ignoreTypo', ignoreTypo),
   );
   context.subscriptions.push(
     vscode.commands.registerCommand('vscode-hanspell.fixAllTypos', fixAllTypos),
@@ -86,6 +93,21 @@ function fixTypo(args: {
   edit.replace(args.document.uri, args.range, args.suggestion);
   HanspellHistory.writeOnce(`${args.token} -> ${args.suggestion}\n`);
   vscode.workspace.applyEdit(edit);
+}
+
+/**
+ * Adds given token to `~/.hanspell-ignore`).
+ *
+ * Called by `vscode-hanspell.ignoreTypo` code action command.
+ */
+function ignoreTypo(args: { document: vscode.TextDocument; token: string }) {
+  HanspellIgnore.append(args.token);
+  const typos = DocumentsToTypos.getTypos(args.document);
+  DocumentsToTypos.setTypos(
+    args.document,
+    typos.filter((typo: HanspellTypo) => typo.token !== args.token),
+  );
+  refreshDiagnostics(args.document);
 }
 
 /**

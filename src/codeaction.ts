@@ -23,6 +23,7 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
     _token: vscode.CancellationToken,
   ): vscode.CodeAction[] {
     let actions: vscode.CodeAction[] = [];
+    const ignores: vscode.CodeAction[] = [];
 
     const hanspellDiagnostics = context.diagnostics.filter(
       (diagnostic) => diagnostic.code === HANSPELL_MENTION,
@@ -36,7 +37,17 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
       actions = actions.concat(
         this.createFixTypoCommandCodeActions(diagnostic, document),
       );
+      if (diagnostic.typo.token) {
+        ignores.push(
+          this.createIgnoreTypoCommandCodeAction(
+            diagnostic.typo.token,
+            document,
+          ),
+        );
+      }
     });
+
+    actions = actions.concat(ignores);
 
     if (!actions.length) {
       return actions;
@@ -109,5 +120,27 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
     }
 
     return actions;
+  }
+
+  private createIgnoreTypoCommandCodeAction(
+    token: string,
+    document: vscode.TextDocument,
+  ): vscode.CodeAction {
+    const action = new vscode.CodeAction(
+      `“${token}” 사전에 추가`,
+      vscode.CodeActionKind.QuickFix,
+    );
+    action.command = {
+      command: 'vscode-hanspell.ignoreTypo',
+      title: 'Ignore a typo',
+      arguments: [
+        {
+          document,
+          token,
+        },
+      ],
+    };
+
+    return action;
   }
 }

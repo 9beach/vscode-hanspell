@@ -37,6 +37,11 @@ export class HanspellIgnore {
   /** Latest glob patterns. */
   private myMatches;
 
+  /** Adds a glob pattern to the end of file */
+  static append = (pattern: string): void => {
+    fs.writeFileSync(HanspellIgnore.path, `${pattern}\n`, { flag: 'a' });
+  };
+
   /** Reads glob patterns in `.hanspell-ignore`. */
   private static get() {
     try {
@@ -53,7 +58,7 @@ export class HanspellIgnore {
 
       HanspellIgnore.lastModified = stat.mtimeMs;
 
-      // '이딸리아*\n톨스또이\n,' => '{이딸리아*,톨스또이*,}'.
+      // '이딸리아*\n톨스또이\n' => '{이딸리아*,톨스또이*,}'.
       const ignores = `{${fs
         .readFileSync(HanspellIgnore.path, 'utf8')
         .replace(/[,{}]/g, '\\$&')
