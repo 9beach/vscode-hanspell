@@ -127,7 +127,7 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
     document: vscode.TextDocument,
   ): vscode.CodeAction {
     const action = new vscode.CodeAction(
-      `“${token}” 사전에 추가`,
+      `사전에 추가: “${token}”`,
       vscode.CodeActionKind.QuickFix,
     );
     action.command = {
