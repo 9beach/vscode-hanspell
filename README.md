@@ -64,7 +64,7 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
 
 이제 ‘바깡스’, ‘바깡스를’ 등 ‘바깡스’로 시작하는 문자열은 맞춤법 오류에서 제외됩니다. 반면 ‘빠이빠이’와 ‘빠이빠이!’는 제외되지만 ‘빠이빠이해요’는 제외되지 않습니다.
 
-`.hanspell-ignore` 마지막 줄은 엔터로 끝나야 하니 파일을 직접 수정할 때 주의하세요. 그리고 [globstar](https://www.linuxjournal.com/content/globstar-new-bash-globbing-option)를 포함한 [글로브 패턴](https://man7.org/linux/man-pages/man7/glob.7.html)을 지원합니다. 맞춤법 오류에서 URL을 제외하고 싶다면 다음을 추가하세요.
+`.hanspell-ignore`는 [globstar](https://www.linuxjournal.com/content/globstar-new-bash-globbing-option)를 포함한 [글로브 패턴](https://man7.org/linux/man-pages/man7/glob.7.html)을 지원합니다. 맞춤법 오류에서 URL을 제외하고 싶다면 다음을 추가하세요.
 
 ```txt
 *http*/**

@@ -39,8 +39,24 @@ export class HanspellIgnore {
 
   /** Adds a glob pattern to the end of file */
   static append = (pattern: string): void => {
-    fs.writeFileSync(HanspellIgnore.path, `${pattern}\n`, { flag: 'a' });
+    fs.writeFileSync(
+      HanspellIgnore.path,
+      HanspellIgnore.needLN() ? `\n${pattern}\n` : `${pattern}\n`,
+      { flag: 'a' },
+    );
   };
+
+  private static needLN() {
+    const matches = HanspellIgnore.get();
+
+    if (
+      matches.empty ||
+      matches.pattern.lastIndexOf(',}') === matches.pattern.length - 2
+    ) {
+      return false;
+    }
+    return true;
+  }
 
   /** Reads glob patterns in `.hanspell-ignore`. */
   private static get() {
@@ -64,7 +80,7 @@ export class HanspellIgnore {
         .replace(/[,{}]/g, '\\$&')
         .replace(/\n\n*/g, ',')}}`;
 
-      if (ignores.length >= 4) {
+      if (ignores.length >= 3) {
         HanspellIgnore.matches = new Minimatch(ignores);
       } else {
         HanspellIgnore.matches = HanspellIgnore.emptyMatches;
