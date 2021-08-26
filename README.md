@@ -64,7 +64,7 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
 
 이제 ‘바깡스’, ‘바깡스를’ 등 ‘바깡스’로 시작하는 문자열은 맞춤법 오류에서 제외됩니다. 반면 ‘빠이빠이’와 ‘빠이빠이!’는 제외되지만 ‘빠이빠이해요’는 제외되지 않습니다.
 
-`.hanspell-ignore` 파일의 마지막 줄은 엔터로 끝나야 하니 파일을 직접 수정할 때 주의하세요.
+`.hanspell-ignore` 마지막 줄은 엔터로 끝나야 하니 파일을 직접 수정할 때 주의하세요.
 
 `.hanspell-ignore`는 [globstar](https://www.linuxjournal.com/content/globstar-new-bash-globbing-option)를 포함한 [글로브 패턴](https://man7.org/linux/man-pages/man7/glob.7.html)을 지원합니다. 맞춤법 오류에서 URL을 제외하고 싶다면 다음을 추가하세요.
 
@@ -83,7 +83,7 @@ $ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 5
 님에게 -> 임에게
 ```
 
-두음법칙으로 ‘님에게’가 아니라 ‘임에게’가 올바릅니다. 이것을 고치려다 ‘선생님에게’를 ‘선생임에게’로 바꾸는 우를 피하려면 단어 경계를 지켜야 합니다. (물론 한국어는 문맥 의존성이 커서 이것으로도 부족합니다.) 그래서 `님에게 -> 임에게`를 등록하면 ‘님에게!’와 ‘님에게’에는 적용되지만 ‘선생님에게’와 ‘님에게는’에는 적용되지 않습니다.
+두음법칙으로 ‘님에게’가 아니라 ‘임에게’가 올바릅니다. 이것을 고치려다 ‘선생님에게’를 ‘선생임에게’로 바꾸는 우를 피하려면 단어 경계를 고려해야 합니다. (물론 한국어는 문맥 의존성이 커서 이것으로도 부족합니다.) 그래서 `님에게 -> 임에게`를 등록하면 ‘님에게!’와 ‘님에게’에는 적용되지만 ‘선생님에게’와 ‘님에게는’에는 적용되지 않습니다.
 
 문서를 수정할 때마다 자동으로 분석해주는 점이 ‘사용자 정의 맞춤법’의 가장 큰 특징입니다. 새로 검사하기 전에는 최근 결과로 계속 분석하기 때문에 같은 실수를 반복하면 자동으로 밑줄이 표시됩니다. 이처럼 사용자 정의 맞춤법은 최근 검사에서 발견된 오류처럼 기능합니다.
 
@@ -97,7 +97,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 [정규 표현식](https://ko.wikipedia.org/wiki/%EC%A0%95%EA%B7%9C_%ED%91%9C%ED%98%84%EC%8B%9D)에 익숙하지 않은 사용자는 이 섹션을 건너뛰세요.
 
-단어 경계를 지키려고 ‘사용자 정의 맞춤법’은 `님에게` 같은 문자열에 [‘Lookahead and Lookbehind Zero-Length Assertions’](https://www.regular-expressions.info/lookaround.html)를 덧붙여서 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 그래서 원하는 문자열이 포함된 다양한 표현을 룰 하나로 처리하기는 어렵습니다.
+‘사용자 정의 맞춤법’은 단어 경계를 지키려고 `님에게` 같은 문자열에 [‘Lookahead and Lookbehind Zero-Length Assertions’](https://www.regular-expressions.info/lookaround.html)를 덧붙여 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 만든 뒤 문서를 검색합니다. 그래서 원하는 문자열이 포함된 다양한 표현을 규칙 하나로 처리하기는 힘듭니다.
 
 이 문제는 `~/.hanspell-bad-expressions.json`에 사용자가 직접 정규 표현식을 작성해서 어느 정도 해결할 수 있습니다. 다음 예를 봅시다.
 
