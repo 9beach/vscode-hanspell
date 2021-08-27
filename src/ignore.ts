@@ -46,6 +46,7 @@ export class HanspellIgnore {
     );
   };
 
+  /** Checks if the last char of the content of `.hanspell-ignore` is '\n'. */
   private static needLN() {
     const matches = HanspellIgnore.get();
 
