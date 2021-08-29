@@ -95,7 +95,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 [정규 표현식](https://ko.wikipedia.org/wiki/%EC%A0%95%EA%B7%9C_%ED%91%9C%ED%98%84%EC%8B%9D)에 익숙하지 않은 사용자는 이 섹션을 건너뛰세요.
 
-‘사용자 정의 맞춤법’은 단어 경계를 지키려고 `님에게` 같은 문자열에 [‘Lookahead and Lookbehind Zero-Length Assertions’](https://www.regular-expressions.info/lookaround.html)를 덧붙여 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 만든 뒤 문서를 검색합니다. 그래서 원하는 문자열이 포함된 다양한 표현을 규칙 하나로 처리하기는 힘듭니다.
+‘사용자 정의 맞춤법’은 단어 경계를 지키려고 교정할 문자열을 검색할 때 [‘Lookahead and Lookbehind Zero-Length Assertions’](https://www.regular-expressions.info/lookaround.html)를 덧붙입니다. 예를 들어 `님에게`는 `/(^|(?<=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]))님에게((?=[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z])|$)/g`로 검색합니다. 그래서 원하는 문자열이 포함된 다양한 표현을 규칙 하나로 처리하기는 힘듭니다.
 
 이 문제는 `~/.hanspell-bad-expressions.json`에 사용자가 직접 정규 표현식을 작성해서 어느 정도 해결할 수 있습니다. 다음 예를 봅시다.
 
@@ -125,7 +125,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
       ],
       "info": "군더더기 있는 표현입니다.",
       "expression": "[가-힣’”`』」》]+([다라]는 +것|에 +있는|[을를] +(가[지진질집져졌]|갖는|지[니닌닐닙녀녔])|게 +[되된될됩돼됐]|[져라고아] +있|[혀해여려겨] +[주준줄줍줘줬])[가-힣]*",
-      "severity": "Warning"
+      "severity": "Information"
     }
   ]
 }
@@ -135,7 +135,7 @@ sort < ~/.hanspell-history | uniq -c | sort -nr | head -n 20 | sed -e 's:^  *[0-
 
 두 번째 표현식은 ‘우리의 사랑의’처럼 ‘-의’를 겹쳐 쓴 표현을 ‘우리 사랑의’처럼 고치도록 제안합니다.
 
-세 번째 표현식은 ‘알려 줍니다’, ‘울게 되었다’ 등 군더더기 있는 표현에 밑줄을 긋도록 설정합니다.
+세 번째 표현식은 ‘알려 줍니다’, ‘울게 되었다’ 등 군더더기 있는 표현에 파란 밑줄을 긋도록 설정합니다.
 
 [형태소](https://ko.wikipedia.org/wiki/%ED%98%95%ED%83%9C%EC%86%8C) 분석 없이 정규 표현식에 의존하는 것은 한계가 분명합니다. ‘세계의 불가사의’는 문제없는 표현이지만 위의 설정으로는 ‘-의’를 겹쳐 썼다고 분석합니다. 주의해서 사용하시기 바랍니다.
 
