@@ -18,14 +18,18 @@ type BadExpression = {
 };
 
 function toDiagnosticSeverity(severity: string | undefined) {
-  switch (severity) {
-    case 'Information':
+  if (severity === undefined) {
+    return vscode.DiagnosticSeverity.Information;
+  }
+
+  switch (severity.toLowerCase()) {
+    case 'information':
       return vscode.DiagnosticSeverity.Information;
-    case 'Warning':
+    case 'warning':
       return vscode.DiagnosticSeverity.Warning;
-    case 'Error':
+    case 'error':
       return vscode.DiagnosticSeverity.Error;
-    case 'Hint':
+    case 'hint':
       return vscode.DiagnosticSeverity.Hint;
     default:
       return vscode.DiagnosticSeverity.Information;
