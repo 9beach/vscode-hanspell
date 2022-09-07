@@ -86,6 +86,6 @@
   },
   "dependencies": {
     "@types/minimatch": "^3.0.5",
-    "hanspell": "^0.9.3"
+    "hanspell": "^0.9.6"
   }
 }
