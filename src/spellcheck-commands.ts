@@ -6,15 +6,15 @@ import { refreshDiagnostics } from './diagnostics';
 import { spellCheck } from './spellcheck';
 import { SpellCheckService } from './service';
 
-/** Spell checks the active document by PNU service. */
-export const spellCheckByPNU = () =>
-  spellCheckWithProgress('맞춤법 검사 (부산대)', SpellCheckService.pnu);
+/** Spell checks the active document by NAVER service. */
+export const spellCheckByNAVER = () =>
+  spellCheckWithProgress('맞춤법 검사 (네이버)', SpellCheckService.naver);
 
 /** Spell checks the active document by DAUM service. */
 export const spellCheckByDAUM = () =>
   spellCheckWithProgress('맞춤법 검사 (다음)', SpellCheckService.daum);
 
-/** Spell checks the active document by PNU and DAUM service. */
+/** Spell checks the active document by NAVER and DAUM service. */
 export const spellCheckByAll = () =>
   spellCheckWithProgress('맞춤법 검사', SpellCheckService.all);
 
@@ -36,7 +36,7 @@ function spellCheckWithProgress(
         try {
           await spellCheck(editor, service);
         } catch (err) {
-          vscode.window.showInformationMessage(err);
+          vscode.window.showInformationMessage(String(err));
         }
         refreshDiagnostics(editor.document);
       }

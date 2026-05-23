@@ -40,12 +40,12 @@ export function spellCheck(
 
   return new Promise((resolve, reject) => {
     let typos: HanspellTypo[] = [];
-    let pnuFailed = false;
+    let naverFailed = false;
 
     function spellCheckDid(response: HanspellTypo[]): void {
-      if (service !== SpellCheckService.pnu) {
+      if (service !== SpellCheckService.naver) {
         response.forEach((typo) => {
-          /** PNU service has good `typo.info`, but DAUM service does not. */
+          /** NAVER service has good `typo.info`, but DAUM service does not. */
           if (typo.info) {
             return;
           } else if (typo.type === 'space') {
@@ -77,8 +77,8 @@ export function spellCheck(
 
       DocumentsToTypos.setTypos(doc, typos);
 
-      if (pnuFailed) {
-        reject('부산대 서비스 접속 오류로 일부 문장은 교정하지 못했습니다.');
+      if (naverFailed) {
+        reject('네이버 서비스 접속 오류로 일부 문장은 교정하지 못했습니다.');
       } else {
         resolve('맞춤법 검사를 마쳤습니다.');
       }
@@ -87,14 +87,14 @@ export function spellCheck(
     const HTTP_TIMEOUT = 20000;
 
     switch (service) {
-      case SpellCheckService.pnu:
-        hanspell.spellCheckByPNU(
+      case SpellCheckService.naver:
+        hanspell.spellCheckByNAVER(
           text,
           HTTP_TIMEOUT,
           spellCheckDid,
           spellCheckFinished,
           (): void => {
-            pnuFailed = true;
+            naverFailed = true;
           },
         );
         break;
@@ -109,7 +109,7 @@ export function spellCheck(
         );
         break;
       default:
-        hanspell.spellCheckByPNU(
+        hanspell.spellCheckByNAVER(
           text,
           HTTP_TIMEOUT,
           spellCheckDid,
@@ -124,7 +124,7 @@ export function spellCheck(
             );
           },
           (): void => {
-            pnuFailed = true;
+            naverFailed = true;
           },
         );
         break;

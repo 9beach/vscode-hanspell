@@ -8,7 +8,6 @@
   "plugins": ["@typescript-eslint"],
   "rules": {
     "@typescript-eslint/naming-convention": "warn",
-    "@typescript-eslint/semi": "warn",
     "curly": "warn",
     "no-throw-literal": "warn",
     "no-tabs": "error",
@@ -19,7 +18,7 @@
         "ignoreReadBeforeAssign": false
       }
     ],
-    "semi": "off"
+    "semi": "warn"
   },
   "ignorePatterns": ["out", "dist", "**/*.d.ts"]
 }

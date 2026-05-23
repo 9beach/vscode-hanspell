@@ -59,7 +59,7 @@ export class HanspellCodeAction implements vscode.CodeActionProvider {
       )
     ) {
       const action = new vscode.CodeAction(
-        '다음, 부산대 공통 오류만 모두 교정',
+        '다음, 네이버 공통 오류만 모두 교정',
         vscode.CodeActionKind.QuickFix,
       );
 

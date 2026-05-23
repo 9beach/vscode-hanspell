@@ -16,7 +16,7 @@ export type HanspellTypo = {
   regex?: RegExp;
   // Diagnostic severity from `~/.hanspell-bad-expressions.json`.
   severity?: vscode.DiagnosticSeverity;
-  // Checks if the typo appears both in PNU and DAUM services.
+  // Checks if the typo appears both in NAVER and DAUM services.
   isCommon?: boolean;
   // Checks if the typo is from `~/.hanspell-typos`.
   isLocal?: boolean;

@@ -12,7 +12,7 @@ import { HanspellHistory } from './history';
 import { HanspellCodeAction } from './codeaction';
 import {
   spellCheckByDAUM,
-  spellCheckByPNU,
+  spellCheckByNAVER,
   spellCheckByAll,
 } from './spellcheck-commands';
 import {
@@ -65,8 +65,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      'vscode-hanspell.spellCheckByPNU',
-      spellCheckByPNU,
+      'vscode-hanspell.spellCheckByNAVER',
+      spellCheckByNAVER,
     ),
   );
 
@@ -133,7 +133,7 @@ function fixAllTypos(args: { document: vscode.TextDocument }) {
 }
 
 /**
- * Fixes all the typos of the document common in PNU and DAUM services.
+ * Fixes all the typos of the document common in NAVER and DAUM services.
  *
  * Called by `vscode-hanspell.fixCommonTypos` code action command.
  */

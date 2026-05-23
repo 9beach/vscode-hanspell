@@ -9,7 +9,9 @@
     ],
     "sourceMap": true,
     "rootDir": "src",
-    "strict": true   /* enable all strict type-checking options */
+    "esModuleInterop": true,
+    "strict": true,   /* enable all strict type-checking options */
+    "useUnknownInCatchVariables": false
   },
   "exclude": [
     "node_modules",
