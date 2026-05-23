@@ -84,6 +84,6 @@
     "typescript": "^5.6.0"
   },
   "dependencies": {
-    "hanspell": "^1.0.0"
+    "hanspell": "^1.0.1"
   }
 }
